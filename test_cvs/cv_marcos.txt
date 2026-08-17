@@ -1,0 +1,61 @@
+Marcos Griffa
+Estudiante de Ciencias de Datos · Desarrollador Python · Análisis de Datos · Automatización
+
+marcosgriffa04@gmail.com
+linkedin.com/in/marcos-griffa-605aa3259
+github.com/MarcosGriffa
+
+PERFIL
+Estudiante de Ciencia de Datos con sólida base técnica en Python, SQL y automatización
+de procesos. Experiencia integrando LLMs (Groq/LLaMA) en pipelines de producción y
+aplicando análisis de datos en entornos operativos y logísticos para mejorar la toma de
+decisiones. Apasionado por la resolución de problemas complejos, el aprendizaje
+continuo y el trabajo en equipo, valores fortalecidos por más de 12 años de práctica
+competitiva de rugby.
+
+PROYECTOS DESTACADOS
+Observatorio IT Junior — Pipeline de Empleo con IA
+Sistema end-to-end que scrapea ofertas IT junior de Computrabajo Argentina, enriquece
+cada oferta con IA (Groq/LLaMA) para detectar stack tecnológico y seniority real, rankea las
+mejores oportunidades contra el perfil del usuario, y genera CVs personalizados enviados
+como .docx vía Telegram Bot. Python, BeautifulSoup4, Groq API, SQLite, pandas, Node.js
+
+Web Scraping & Automatización (Mercado Libre)
+Desarrollo de un script en Python para el seguimiento de precios de notebooks.
+Implementación de base de datos local y conexión vía webhooks con n8n para notificaciones
+automáticas.
+
+E-commerce Automation (Las Dellas)
+Creación de un ecosistema digital integrando Google Forms y n8n para automatizar la
+confirmación de pedidos y gestión de clientes.
+
+Desarrollo de Software en Python
+Creación de aplicaciones lógicas y juegos (Battleship, Minesweeper) aplicando conceptos de
+programación orientada a objetos y algoritmos.
+
+EXPERIENCIA LABORAL
+FERROSIDER (03/10/2024 - Actualidad)
+PUERTO DOCK SUD — Surveyor / Control de Operaciones
+- Análisis de Datos Operativos: registro y actualización de bases de datos críticas para el
+  seguimiento de procesos portuarios.
+- Reporting: elaboración de reportes de estado para la gerencia y clientes externos.
+- Optimización: identificación de desvíos en procedimientos de control, proponiendo mejoras
+  basadas en la precisión de los datos.
+
+CADENA DE ALIMENTOS
+Gerente de Operaciones (1/10/2025 - 4/03/2026)
+- Coordinación integral del equipo y organización de la operativa diaria.
+- Gestión de registros administrativos y reportes de caja para control interno.
+- Resolución de consultas y reclamos de clientes bajo entornos de alta demanda.
+- Mantenimiento de comunicación fluida entre áreas internas.
+
+EDUCACIÓN
+Universidad de Buenos Aires — Lic. en Ciencias de Datos (en curso)
+Estadística, Bases de Datos, Visualización de Datos, Programación (Python/SQL)
+Instituto Dr. Nicolás Avellaneda — Secundario completo
+
+HABILIDADES
+Análisis de Datos: SQL, Excel Avanzado, Google Sheets, Python, pandas, SQLite
+Automatización & IA: Groq API/LLM, BeautifulSoup4, Telegram Bot, n8n
+Idiomas: Español (Nativo), Inglés (Intermedio)
+Competencias: Trabajo en equipo, Comunicación, Gestión de reportes, Detección de desvíos, Mejora continua

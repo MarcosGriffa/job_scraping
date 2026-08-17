@@ -1,0 +1,173 @@
+"""
+pipeline.py — Motor completo, de punta a punta.
+
+  CV → clasificación (área, seniority, queries ES/EN) → búsqueda en portales
+     → prefiltro por embeddings → explicación con IA de los finalistas
+     → resultado final ordenado
+
+Uso:
+    python pipeline.py test_cvs/cv_marcos.txt
+    python pipeline.py test_cvs/cv_ventas.txt
+
+Guarda el resultado en data/resultados_<nombre_cv>.json y .csv, y también
+lo imprime lindo en la consola.
+"""
+
+from __future__ import annotations
+
+import json
+import re
+import sys
+from pathlib import Path
+
+import pandas as pd
+
+from cv_profile import extract_cv_text, classify_cv
+from semantic_match import rank_and_explain
+
+from sources.computrabajo import ComputrabajoSource
+from sources.jooble import JoobleSource
+# from sources.multitrabajos import MultitrabajosSource  # DESACTIVADO: es de Ecuador, no Argentina
+# from sources.konzerta import KonzertaSource             # DESACTIVADO: es de Panamá, no Argentina
+from sources.remoteok import RemoteOKSource
+from sources.jobicy import JobicySource
+from sources.himalayas import HimalayasSource
+from sources.weworkremotely import WeWorkRemotelySource
+
+# Fuentes generales (español): se consultan siempre, sin importar el rubro.
+#
+# Multitrabajos y Konzerta quedaron afuera tras investigarlas (10/08/2026):
+# no son sitios argentinos (Multitrabajos = Ecuador, Konzerta = Panamá; no
+# existe versión .com.ar ni subdominio ar. de ninguna de las dos), así que
+# aunque tienen una API JSON real detrás del loader de JavaScript, traerían
+# ofertas del país equivocado. Además esa API está protegida por Cloudflare
+# y devuelve 403 a pedidos que no vengan de un navegador real. Ver detalle
+# en README_FASE1.md.
+# Jooble sumado el 13/08/2026: metabuscador con API oficial, apuntando al
+# dominio argentino (ar.jooble.org). Fuente general — trae de cualquier
+# rubro, no solo tech. OJO con el cupo: el plan gratuito son 500 requests
+# EN TOTAL de por vida (~1 por query, ~5 por CV) — ver sources/jooble.py.
+GENERAL_SOURCES = [ComputrabajoSource(), JoobleSource()]
+
+# Fuentes verticales tech (inglés): se activan solo si el CV es de área IT,
+# y se consultan con las queries en inglés (search_queries_en).
+TECH_SOURCES = [RemoteOKSource(), JobicySource(), HimalayasSource(), WeWorkRemotelySource()]
+
+MAX_RESULTS_PER_QUERY = 25
+EMBEDDING_TOP_K = 30
+# Cuántas ofertas finalistas se explican con IA (y por lo tanto, cuántas se
+# muestran al usuario). Bajado de 15 a 10 el 17/08/2026 a pedido de Marcos:
+# además de ser lo que se quiere mostrar, ahorra 5 llamadas al modelo grande
+# de Groq por cada CV.
+EXPLAIN_TOP_N = 10
+
+
+def _normalize_key(title: str, company: str) -> str:
+    """Clave para detectar ofertas duplicadas aunque la URL tenga un hash
+    de tracking distinto: título + empresa, en minúscula y sin espacios extra."""
+    norm = lambda s: re.sub(r"\s+", " ", (s or "").strip().lower())
+    return f"{norm(title)}::{norm(company)}"
+
+
+def collect_jobs(search_queries_es: list[str], search_queries_en: list[str], is_tech: bool) -> list[dict]:
+    """Corre las fuentes generales con las queries en español y, si el CV es
+    tech, las fuentes verticales con las queries en inglés. Devuelve la lista
+    combinada, deduplicada por URL exacta y por título+empresa."""
+    all_jobs = []
+
+    for source in GENERAL_SOURCES:
+        print(f"\n[{source.name}]")
+        for query in search_queries_es:
+            try:
+                jobs = source.search(query, max_results=MAX_RESULTS_PER_QUERY)
+            except Exception as e:
+                print(f"    [{source.name}] EXCEPCIÓN no controlada: {e}")
+                jobs = []
+            all_jobs.extend(jobs)
+
+    if is_tech:
+        queries_en = search_queries_en or search_queries_es  # fallback si vino vacío
+        for source in TECH_SOURCES:
+            print(f"\n[{source.name}]")
+            for query in queries_en:
+                try:
+                    jobs = source.search(query, max_results=MAX_RESULTS_PER_QUERY)
+                except Exception as e:
+                    print(f"    [{source.name}] EXCEPCIÓN no controlada: {e}")
+                    jobs = []
+                all_jobs.extend(jobs)
+
+    seen_urls = set()
+    seen_keys = set()
+    unique_jobs = []
+    for job in all_jobs:
+        url = job.get("url", "")
+        key = _normalize_key(job.get("title", ""), job.get("company", ""))
+        if url and url in seen_urls:
+            continue
+        if key in seen_keys:
+            continue
+        seen_urls.add(url)
+        seen_keys.add(key)
+        unique_jobs.append(job)
+
+    print(f"\nTotal ofertas encontradas: {len(all_jobs)} | Únicas: {len(unique_jobs)}")
+    return unique_jobs
+
+
+def run(cv_path: str):
+    print("=" * 60)
+    print("  MOTOR DE MATCHING CV ↔ EMPLEO — Fase 1")
+    print("=" * 60)
+
+    cv_text = extract_cv_text(cv_path)
+    print(f"\nCV leído: {len(cv_text)} caracteres")
+
+    print("\nClasificando CV con IA...")
+    profile = classify_cv(cv_text)
+    print(json.dumps(profile, indent=2, ensure_ascii=False))
+
+    jobs = collect_jobs(profile["search_queries"], profile.get("search_queries_en", []), profile["is_tech"])
+
+    if not jobs:
+        print("\n[!] No se encontraron ofertas. Revisá los [WARN]/[ERROR] de arriba.")
+        return
+
+    results = rank_and_explain(
+        cv_text, jobs, embedding_top_k=EMBEDDING_TOP_K, explain_top_n=EXPLAIN_TOP_N
+    )
+
+    # ── Guardar resultados ──
+    cv_slug = Path(cv_path).stem
+    out_dir = Path("data")
+    out_dir.mkdir(exist_ok=True)
+
+    json_path = out_dir / f"resultados_{cv_slug}.json"
+    csv_path = out_dir / f"resultados_{cv_slug}.csv"
+
+    with open(json_path, "w", encoding="utf-8") as f:
+        json.dump({"profile": profile, "results": results}, f, indent=2, ensure_ascii=False)
+
+    pd.DataFrame(results).to_csv(csv_path, index=False, encoding="utf-8")
+
+    # ── Mostrar top resultados ──
+    print(f"\n{'=' * 60}")
+    print(f"  TOP MATCHES — área detectada: {profile['area']} ({profile['seniority']})")
+    print(f"{'=' * 60}")
+
+    for i, r in enumerate(results[:10], 1):
+        print(f"\n  #{i} — Score {r.get('score', '?')}/100 — {r['title']}")
+        print(f"  {r['company']} | {r['location']} | fuente: {r['source']}")
+        if r.get("matches"):
+            print(f"  ✓ Matchea: {', '.join(r['matches'])}")
+        if r.get("gaps"):
+            print(f"  ✗ Le falta: {', '.join(r['gaps'])}")
+        print(f"  → {r.get('explicacion', '')}")
+        print(f"  {r['url']}")
+
+    print(f"\n✓ Guardado en {json_path} y {csv_path}")
+
+
+if __name__ == "__main__":
+    cv_arg = sys.argv[1] if len(sys.argv) > 1 else "test_cvs/cv_marcos.txt"
+    run(cv_arg)

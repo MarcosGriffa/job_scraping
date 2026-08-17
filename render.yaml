@@ -1,0 +1,26 @@
+# render.yaml — configuración del motor (api/) para Render.
+#
+# Render lee este archivo solo si el servicio se crea como "Blueprint"
+# (botón "New +" -> "Blueprint" en el dashboard, apuntando a este repo).
+# Si en cambio se crea como "Web Service" a mano, hay que cargar estos
+# mismos valores manualmente en el dashboard — quedan documentados acá
+# de cualquier forma. Ver README_DEPLOY.md para el paso a paso completo.
+services:
+  - type: web
+    name: empatia-nextstep-motor
+    runtime: python
+    plan: free
+    region: oregon
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn api.main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: PYTHONUTF8
+        value: "1"
+      - key: PYTHONIOENCODING
+        value: utf-8
+      - key: PYTHON_VERSION
+        value: "3.13.7"  # misma versión con la que se probó todo en local
+      # Las claves reales (GROQ_API_KEY, SUPABASE_URL, SUPABASE_SECRET_KEY,
+      # JOOBLE_API_KEY, COHERE_API_KEY, ALLOWED_ORIGINS) NO van acá — se
+      # cargan a mano en el dashboard de Render (Environment) para no
+      # subir secretos al repositorio.

@@ -1,0 +1,26 @@
+# --- Fase 1: motor de matching universal ---
+beautifulsoup4>=4.14
+groq>=1.6
+numpy>=2.2
+pandas>=2.3
+PyMuPDF>=1.27
+python-dotenv>=1.2
+requests>=2.34
+feedparser>=6.0
+cohere>=5.13  # filtro semantico (etapa 1) — reemplazo a sentence-transformers
+# sentence-transformers y torch se sacaron el 17/08/2026: arrastraban ~800 MB
+# de librerias y llevaban el motor a 768 MB de RAM, con lo cual no entraba en
+# un servidor gratuito de 512 MB. Ver el comentario en semantic_match.py.
+
+# --- cv_tailor.py: generación de CVs adaptados por oferta (.docx) ---
+python-docx>=1.1
+
+# --- Fase 2: API web (api/) que expone el pipeline a la web Next.js ---
+fastapi>=0.115
+uvicorn[standard]>=0.32
+python-multipart>=0.0.12
+supabase>=2.9  # persistencia real (api/storage_backends/supabase_backend.py)
+
+# --- Legado (bot de Telegram, opcional) ---
+# cv_adapter.py (el viejo, hardcodeado al CV de Marcos vía Node.js) quedó
+# reemplazado por cv_tailor.py — ver README_FASE1.md.

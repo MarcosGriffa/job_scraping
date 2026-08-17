@@ -1,0 +1,44 @@
+# Entornos virtuales
+venv/
+.venv/
+
+# Variables de entorno — NUNCA subir (contienen API keys)
+.env
+
+# Datos generados en runtime
+data/*.csv
+data/*.db
+data/*.json
+data/cvs_adaptados/
+data/.bot_offset
+data/.bot.lock
+data/bot.log
+data/_temp_cv.js
+
+# Fase 2 — API web: "base de datos" JSON local (temporal, hasta Supabase)
+# y CVs subidos por usuarios desde la web. Datos personales, no van al repo.
+data/db/
+data/uploads/
+
+# Fase 2 — Next.js (ver web/README para instalar/correr)
+web/node_modules/
+web/.next/
+web/.env.local
+
+# Cache Python
+__pycache__/
+*.pyc
+*.pyo
+.ipynb_checkpoints/
+
+# VS Code
+.vscode/
+
+# Copia vieja de la Fase 1 (zip + carpeta extraída), quedó suelta en la raíz
+# duplicando sources/, requirements.txt, etc. No aporta nada al repo — el
+# código vigente es el de la raíz del proyecto.
+job_scraping_fase1_v1.1/
+job_scraping_fase1_v1.1.zip
+
+# Mantener la carpeta data en el repo (vacía)
+!data/.gitkeep
