@@ -1,0 +1,58 @@
+@import "tailwindcss";
+
+:root {
+  --color-cream: #fbf3e7;
+  --color-cream-soft: #f4e8d6;
+  /* Colores de acento, subidos de saturación (13/08) — la primera pasada
+     quedaba "pálida" comparada con design-reference.jpeg. Misma familia de
+     color, más intensidad. */
+  --color-terracota: #d15815;
+  --color-terracota-dark: #b34c16;
+  --color-olive: #628b46;
+  --color-olive-dark: #55753f;
+  --color-mustard: #e4a232;
+  --color-brown-title: #4a2f20;
+  --color-brown-body: #7a6a5a;
+  --color-white: #ffffff;
+
+  /* Tints suaves — de la referencia visual (design-reference.jpeg): tarjetas
+     de testimonios e íconos, más pastel que los colores de acento sólidos. */
+  --color-olive-tint: #d7dec2;
+  --color-olive-tint-dark: #8a9a6f;
+  --color-terracota-tint: #ecc9b3;
+  --color-terracota-tint-dark: #b98462;
+  --color-mustard-tint: #f2e0b8;
+  --color-mustard-tint-dark: #c99a3e;
+}
+
+@theme inline {
+  --color-cream: var(--color-cream);
+  --color-cream-soft: var(--color-cream-soft);
+  --color-terracota: var(--color-terracota);
+  --color-terracota-dark: var(--color-terracota-dark);
+  --color-olive: var(--color-olive);
+  --color-olive-dark: var(--color-olive-dark);
+  --color-mustard: var(--color-mustard);
+  --color-brown-title: var(--color-brown-title);
+  --color-brown-body: var(--color-brown-body);
+  --color-olive-tint: var(--color-olive-tint);
+  --color-olive-tint-dark: var(--color-olive-tint-dark);
+  --color-terracota-tint: var(--color-terracota-tint);
+  --color-terracota-tint-dark: var(--color-terracota-tint-dark);
+  --color-mustard-tint: var(--color-mustard-tint);
+  --color-mustard-tint-dark: var(--color-mustard-tint-dark);
+  --font-sans: var(--font-nunito);
+}
+
+body {
+  background: var(--color-cream);
+  color: var(--color-brown-body);
+  font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  color: var(--color-brown-title);
+}
