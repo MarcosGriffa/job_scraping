@@ -11,10 +11,10 @@ export function Contact() {
         ¿Tenés dudas, sugerencias o encontraste algo que no funciona? Escribinos.
       </p>
       <a
-        href="mailto:marquitosgriffa@gmail.com"
+        href="mailto:marcosgriffa04@gmail.com"
         className="mt-6 inline-block rounded-full border-2 border-olive px-6 py-3 text-sm font-bold text-olive hover:bg-olive hover:text-white"
       >
-        marquitosgriffa@gmail.com
+        marcosgriffa04@gmail.com
       </a>
     </section>
   );
