@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { FASTAPI_URL } from "@/lib/config";
+import { getAccessToken } from "@/lib/supabase/server";
 
 // Corre el pipeline completo (clasificar CV + buscar en portales + matchear
 // con IA) — puede tardar 1-2 minutos. No le ponemos límite de tiempo propio,
@@ -7,6 +8,15 @@ import { FASTAPI_URL } from "@/lib/config";
 export const maxDuration = 300;
 
 export async function POST(request: NextRequest) {
+  // Fase 3: el user_id ya NO lo manda el cliente — se saca del token de
+  // sesión, verificado del lado del motor (api/auth.py). Sin sesión, ni
+  // siquiera intentamos: /subir-cv ya está protegida por proxy.ts, pero
+  // esta ruta también se cubre sola por si alguien le pega directo.
+  const token = await getAccessToken();
+  if (!token) {
+    return NextResponse.json({ error: "Iniciá sesión para subir tu CV." }, { status: 401 });
+  }
+
   let incoming: FormData;
   try {
     incoming = await request.formData();
@@ -15,8 +25,6 @@ export async function POST(request: NextRequest) {
   }
 
   const file = incoming.get("file");
-  const userId = (incoming.get("user_id") as string) || "default";
-
   if (!(file instanceof Blob)) {
     return NextResponse.json({ error: "Falta el archivo del CV." }, { status: 400 });
   }
@@ -24,11 +32,14 @@ export async function POST(request: NextRequest) {
   const forward = new FormData();
   const filename = file instanceof File ? file.name : "cv.pdf";
   forward.append("file", file, filename);
-  forward.append("user_id", userId);
 
   let upstream: Response;
   try {
-    upstream = await fetch(`${FASTAPI_URL}/api/match`, { method: "POST", body: forward });
+    upstream = await fetch(`${FASTAPI_URL}/api/match`, {
+      method: "POST",
+      body: forward,
+      headers: { Authorization: `Bearer ${token}` },
+    });
   } catch {
     return NextResponse.json(
       { error: "No se pudo conectar con el motor de matching. ¿Está corriendo el backend (api/main.py)?" },

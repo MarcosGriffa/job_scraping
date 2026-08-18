@@ -33,6 +33,7 @@ load_dotenv()
 if os.getenv("SUPABASE_URL") and os.getenv("SUPABASE_SECRET_KEY"):
     from .storage_backends.supabase_backend import (  # noqa: F401
         DEFAULT_USER_ID,
+        claim_anonymous_data,
         count_recent_runs,
         get_applied_job_ids,
         get_cv_profile,
@@ -46,6 +47,7 @@ if os.getenv("SUPABASE_URL") and os.getenv("SUPABASE_SECRET_KEY"):
 else:
     from .storage_backends.json_backend import (  # noqa: F401
         DEFAULT_USER_ID,
+        claim_anonymous_data,
         count_recent_runs,
         get_applied_job_ids,
         get_cv_profile,

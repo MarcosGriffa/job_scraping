@@ -106,6 +106,35 @@ def count_recent_runs(user_id: str, hours: int = 24) -> int:
     return len(rows)
 
 
+def claim_anonymous_data(anon_id: str, real_user_id: str) -> dict:
+    """Fase 3 — al crear una cuenta, re-etiqueta lo que ese navegador tenía
+    guardado bajo su id anónimo, para que pase a ser del usuario real.
+
+    Se llama UNA sola vez, en el alta de cuenta (nunca en un login), y es
+    idempotente a propósito: si se llama de nuevo (doble click, reintento
+    de red), la segunda vez no encuentra filas con ese anon_id y no hace
+    nada — no hay forma de que "pise" datos por error.
+
+    anon_id="" (sin cookie previa) es válido y no hace nada."""
+    if not anon_id or anon_id == real_user_id:
+        return {"cv_profiles": 0, "match_results": 0, "applied_jobs": 0}
+
+    c = _get_client()
+    resultado = {}
+    for tabla in ("cv_profiles", "match_results", "applied_jobs"):
+        try:
+            r = c.table(tabla).update({"user_id": real_user_id}).eq("user_id", anon_id).execute()
+            resultado[tabla] = len(r.data)
+        except Exception as e:
+            # applied_jobs tiene clave primaria (user_id, job_id): en el caso
+            # remoto de que la cuenta real ya tuviera una fila para el mismo
+            # job_id, el UPDATE choca contra esa clave. No dejamos que eso
+            # tumbe la migración de las otras tablas — se loguea y se sigue.
+            print(f"[claim_anonymous_data] no se pudo migrar '{tabla}': {e}")
+            resultado[tabla] = 0
+    return resultado
+
+
 def get_match_results(user_id: str, match_id: str | None = None) -> dict | None:
     """Igual que en json_backend.py: si no se pasa match_id, trae la corrida
     más reciente y le actualiza el flag "applied" a cada oferta con el

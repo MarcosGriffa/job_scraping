@@ -1,7 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { FASTAPI_URL } from "@/lib/config";
+import { getAccessToken } from "@/lib/supabase/server";
 
 export async function POST(request: NextRequest) {
+  const token = await getAccessToken();
+  if (!token) {
+    return NextResponse.json({ error: "Iniciá sesión para hacer esto." }, { status: 401 });
+  }
+
   const body = await request.json().catch(() => null);
   if (!body?.job_id) {
     return NextResponse.json({ error: "Falta job_id." }, { status: 400 });
@@ -11,12 +17,8 @@ export async function POST(request: NextRequest) {
   try {
     upstream = await fetch(`${FASTAPI_URL}/api/jobs/apply`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        user_id: body.user_id || "default",
-        job_id: body.job_id,
-        applied: body.applied ?? true,
-      }),
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+      body: JSON.stringify({ job_id: body.job_id, applied: body.applied ?? true }),
     });
   } catch {
     return NextResponse.json(

@@ -119,6 +119,42 @@ def save_match_results(user_id: str, cv_id: str, results: list[dict], profile: d
     return match_id
 
 
+def claim_anonymous_data(anon_id: str, real_user_id: str) -> dict:
+    """Misma firma/comportamiento que supabase_backend.py — ver ese archivo
+    para la explicación completa. Acá simplemente re-escribe el user_id en
+    los 3 archivos JSON."""
+    if not anon_id or anon_id == real_user_id:
+        return {"cv_profiles": 0, "match_results": 0, "applied_jobs": 0}
+
+    resultado = {}
+    with _lock:
+        data = _load(CV_PROFILES_FILE)
+        n = sum(1 for v in data.values() if v.get("user_id") == anon_id)
+        for v in data.values():
+            if v.get("user_id") == anon_id:
+                v["user_id"] = real_user_id
+        _save(CV_PROFILES_FILE, data)
+        resultado["cv_profiles"] = n
+
+        data = _load(MATCH_RESULTS_FILE)
+        n = sum(1 for v in data.values() if v.get("user_id") == anon_id)
+        for v in data.values():
+            if v.get("user_id") == anon_id:
+                v["user_id"] = real_user_id
+        _save(MATCH_RESULTS_FILE, data)
+        resultado["match_results"] = n
+
+        data = _load(APPLIED_JOBS_FILE)
+        anon_entries = data.pop(anon_id, {})
+        real_entries = data.setdefault(real_user_id, {})
+        for job_id, info in anon_entries.items():
+            real_entries.setdefault(job_id, info)  # no pisa si ya existia
+        _save(APPLIED_JOBS_FILE, data)
+        resultado["applied_jobs"] = len(anon_entries)
+
+    return resultado
+
+
 def count_recent_runs(user_id: str, hours: int = 24) -> int:
     """Cuántas búsquedas COMPLETAS hizo esta persona en las últimas `hours`.
     Misma firma que en supabase_backend.py — ver api/rate_limit.py."""
