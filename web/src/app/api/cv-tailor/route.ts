@@ -1,24 +1,28 @@
 import { NextRequest, NextResponse } from "next/server";
 import { FASTAPI_URL } from "@/lib/config";
+import { getAccessToken } from "@/lib/supabase/server";
 
 // Generar el CV adaptado tarda unos segundos (una llamada a la IA), no los
 // minutos del matching completo — pero le damos margen por las dudas.
 export const maxDuration = 120;
 
 export async function GET(request: NextRequest) {
-  const userId = request.nextUrl.searchParams.get("user_id") || "default";
-  const jobId = request.nextUrl.searchParams.get("job_id") || "";
+  const token = await getAccessToken();
+  if (!token) {
+    return NextResponse.json({ error: "Iniciá sesión para generar el CV." }, { status: 401 });
+  }
 
+  const jobId = request.nextUrl.searchParams.get("job_id") || "";
   if (!jobId) {
     return NextResponse.json({ error: "Falta job_id." }, { status: 400 });
   }
 
   let upstream: Response;
   try {
-    upstream = await fetch(
-      `${FASTAPI_URL}/api/cv/tailor?user_id=${encodeURIComponent(userId)}&job_id=${encodeURIComponent(jobId)}`,
-      { cache: "no-store" }
-    );
+    upstream = await fetch(`${FASTAPI_URL}/api/cv/tailor?job_id=${encodeURIComponent(jobId)}`, {
+      cache: "no-store",
+      headers: { Authorization: `Bearer ${token}` },
+    });
   } catch {
     return NextResponse.json(
       { error: "No se pudo conectar con el motor. ¿Está corriendo el backend (api/main.py)?" },

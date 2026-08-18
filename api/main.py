@@ -37,12 +37,13 @@ import shutil
 import uuid
 from pathlib import Path
 
-from fastapi import FastAPI, File, Form, HTTPException, UploadFile
+from fastapi import Depends, FastAPI, File, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from pydantic import BaseModel
 
 from . import rate_limit, storage
+from .auth import get_verified_user_id
 from .matching import run_full_pipeline
 from .tailor import TailorError, generate_tailored_cv
 
@@ -92,10 +93,13 @@ def health():
 
 
 @app.post("/api/match")
-async def upload_and_match(file: UploadFile = File(...), user_id: str = Form("default")):
+async def upload_and_match(file: UploadFile = File(...), user_id: str = Depends(get_verified_user_id)):
     """Recibe un CV (PDF o .txt), corre todo el pipeline (clasificar → buscar
     → matchear) y devuelve los resultados. Puede tardar bastante (hay varias
-    llamadas a IA y scraping de portales) — un minuto o dos es normal."""
+    llamadas a IA y scraping de portales) — un minuto o dos es normal.
+
+    Fase 3: requiere sesión real (ver api/auth.py) — el user_id NUNCA se
+    toma de lo que mande el cliente, se verifica del token."""
 
     suffix = Path(file.filename or "").suffix.lower()
     if suffix not in ALLOWED_EXTENSIONS:
@@ -130,7 +134,7 @@ async def upload_and_match(file: UploadFile = File(...), user_id: str = Form("de
 
 
 @app.get("/api/match/latest")
-def latest_match(user_id: str = "default"):
+def latest_match(user_id: str = Depends(get_verified_user_id)):
     """Última corrida de matching guardada de este usuario (para no tener
     que resubir el CV cada vez que se recarga la página de resultados)."""
     try:
@@ -143,24 +147,23 @@ def latest_match(user_id: str = "default"):
 
 
 class ApplyBody(BaseModel):
-    user_id: str = "default"
     job_id: str
     applied: bool = True
 
 
 @app.post("/api/jobs/apply")
-def apply_job(body: ApplyBody):
+def apply_job(body: ApplyBody, user_id: str = Depends(get_verified_user_id)):
     """Marca (o desmarca) una oferta como 'aplicada'. Las corridas de
     matching futuras la van a excluir automáticamente (ver matching.py)."""
     try:
-        storage.mark_as_applied(body.user_id, body.job_id, body.applied)
+        storage.mark_as_applied(user_id, body.job_id, body.applied)
     except Exception as e:
         raise HTTPException(500, _friendly_storage_error(e))
     return {"ok": True, "job_id": body.job_id, "applied": body.applied}
 
 
 @app.get("/api/jobs/applied")
-def applied_jobs(user_id: str = "default"):
+def applied_jobs(user_id: str = Depends(get_verified_user_id)):
     return {"job_ids": sorted(storage.get_applied_job_ids(user_id))}
 
 
@@ -168,7 +171,7 @@ DOCX_MIME = "application/vnd.openxmlformats-officedocument.wordprocessingml.docu
 
 
 @app.get("/api/cv/tailor")
-def tailor_cv(user_id: str = "default", job_id: str = ""):
+def tailor_cv(job_id: str = "", user_id: str = Depends(get_verified_user_id)):
     """Devuelve el .docx del CV adaptado a UNA oferta puntual.
 
     Se genera en el momento (unos segundos) y queda cacheado por CV+oferta,
@@ -189,3 +192,25 @@ def tailor_cv(user_id: str = "default", job_id: str = ""):
 
     print(f"[tailor] {'cache' if from_cache else 'generado'}: {download_name}")
     return FileResponse(path, media_type=DOCX_MIME, filename=download_name)
+
+
+class ClaimBody(BaseModel):
+    anon_id: str = ""
+
+
+@app.post("/api/account/claim")
+def claim_anonymous_data(body: ClaimBody, user_id: str = Depends(get_verified_user_id)):
+    """Fase 3 — al crear una cuenta, re-etiqueta lo que ese navegador tenía
+    guardado bajo su id anónimo (cv_profiles/match_results/applied_jobs),
+    para que pase a estar bajo la cuenta real. Ver storage.claim_anonymous_data.
+
+    El "anon_id" viene de la ruta de Next.js (web/src/app/api/account/claim),
+    que lo lee directo de la cookie del pedido entrante — nunca es un dato
+    que el navegador pueda mandar libremente acá, porque quien de verdad
+    sos ("user_id") ya está resuelto y verificado antes de llegar a esta
+    función (Depends(get_verified_user_id))."""
+    try:
+        resultado = storage.claim_anonymous_data(body.anon_id, user_id)
+    except Exception as e:
+        raise HTTPException(500, _friendly_storage_error(e))
+    return {"ok": True, "migrado": resultado}

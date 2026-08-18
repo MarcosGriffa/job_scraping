@@ -21,6 +21,13 @@ uvicorn[standard]>=0.32
 python-multipart>=0.0.12
 supabase>=2.9  # persistencia real (api/storage_backends/supabase_backend.py)
 
+# --- Fase 3: login real (api/auth.py) ---
+# PyJWT verifica la firma de los tokens de Supabase Auth contra su llave
+# pública (JWKS) — no requiere ningún secreto nuevo. Necesita el extra
+# [crypto] (trae "cryptography") porque Supabase firma con ES256, un
+# algoritmo de llave asimétrica; sin el extra, PyJWT no sabe verificarlo.
+PyJWT[crypto]>=2.9
+
 # --- Legado (bot de Telegram, opcional) ---
 # cv_adapter.py (el viejo, hardcodeado al CV de Marcos vía Node.js) quedó
 # reemplazado por cv_tailor.py — ver README_FASE1.md.

@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { getUserId } from "@/lib/userId";
 import { IconUpload } from "./illustrations/icons";
 
 /**
@@ -19,9 +18,7 @@ export function TailorCvButton({ jobId }: { jobId: string }) {
     setEstado("generando");
     setError(null);
     try {
-      const res = await fetch(
-        `/api/cv-tailor?user_id=${encodeURIComponent(getUserId())}&job_id=${encodeURIComponent(jobId)}`
-      );
+      const res = await fetch(`/api/cv-tailor?job_id=${encodeURIComponent(jobId)}`);
       if (!res.ok) {
         const body = await res.json().catch(() => null);
         throw new Error(body?.error || "No se pudo generar el CV.");
