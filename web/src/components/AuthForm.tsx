@@ -172,6 +172,16 @@ export function AuthForm({ mode }: { mode: "login" | "signup" }) {
           </>
         )}
       </p>
+
+      {mode === "signup" && (
+        <p className="mt-4 text-center text-xs text-brown-body/70">
+          Al crear tu cuenta aceptás nuestra{" "}
+          <Link href="/privacidad" className="font-semibold text-brown-body underline">
+            Política de Privacidad
+          </Link>
+          .
+        </p>
+      )}
     </div>
   );
 }
