@@ -53,8 +53,27 @@ servicio, nunca se suben al repositorio.
 4. En **Environment Variables**, agregá:
    - `FASTAPI_URL` = la URL de Render del paso 1 (sin la barra final), ej.
      `https://empatia-nextstep-motor.onrender.com`
+   - `NEXT_PUBLIC_SUPABASE_URL` = mismo valor que `SUPABASE_URL` en Render.
+   - `NEXT_PUBLIC_SUPABASE_ANON_KEY` = mismo valor que `SUPABASE_PUBLISHABLE_KEY`
+     en Render (la clave pública, segura para el navegador — **nunca** la
+     `SUPABASE_SECRET_KEY`, esa es solo para el motor).
+   - Las tres tienen que estar tildadas para el ambiente **Production**, no
+     solo Preview/Development — es un tilde que se pasa por alto fácil.
 5. **Deploy**. Tarda 1-2 minutos. Al terminar da una URL pública, algo
    como `https://empatia-nextstep.vercel.app`.
+
+> ⚠️ **Las variables `NEXT_PUBLIC_*` se incrustan en el código AL COMPILAR,
+> no se leen en caliente.** Si las agregás o corregís *después* de que ya
+> existe un build, un "Redeploy" común puede reutilizar ese build viejo
+> (con la variable todavía ausente adentro) y el error sigue apareciendo
+> aunque la variable ya esté bien cargada en el panel. Nos pasó (18/08/2026:
+> "Error: Your project's URL and Key are required to create a Supabase
+> client" en el 100% de los pedidos, con las variables ya cargadas). La
+> señal de alarma es la fecha del deployment activo: si dice "Ready" pero
+> con una fecha vieja, sospechá de esto. La forma confiable de arreglarlo:
+> al Redeploy-ear, buscar la opción de **no usar la caché de build** (o,
+> más simple, subir cualquier commit nuevo — un push siempre fuerza un
+> build de cero).
 
 ## 3. Cerrar el círculo: restringir el motor a la web
 
