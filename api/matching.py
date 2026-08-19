@@ -58,7 +58,17 @@ def run_full_pipeline(user_id: str, cv_path: str, filename: str) -> dict:
         r["applied"] = False  # recién generados, ninguno puede estar aplicado todavía
 
     match_id = storage.save_match_results(user_id, cv_id, results, profile=profile)
-    storage.mark_jobs_seen(user_id, [r["job_id"] for r in results])
+
+    try:
+        storage.mark_jobs_seen(user_id, [r["job_id"] for r in results])
+    except Exception as e:
+        # Nunca dejar que esto tumbe la búsqueda: es soporte para los avisos
+        # por mail (feature aparte), no el resultado que la persona está
+        # esperando ver. Importa especialmente en la ventana de tiempo antes
+        # de correr la migración de supabase/schema.sql (tabla seen_jobs
+        # inexistente todavía) — sin este try/except, ESO rompería la
+        # búsqueda para todo el mundo, no solo para los avisos.
+        print(f"[matching] no se pudo marcar seen_jobs (no crítico): {e}")
 
     return {
         "cv_id": cv_id,
