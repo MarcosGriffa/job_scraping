@@ -214,3 +214,27 @@ def claim_anonymous_data(body: ClaimBody, user_id: str = Depends(get_verified_us
     except Exception as e:
         raise HTTPException(500, _friendly_storage_error(e))
     return {"ok": True, "migrado": resultado}
+
+
+class NotificationSettingBody(BaseModel):
+    activas: bool
+
+
+@app.get("/api/notifications/settings")
+def get_notification_settings(user_id: str = Depends(get_verified_user_id)):
+    """Estado del interruptor de avisos por mail — apagado si nunca se tocó
+    (opt-in, ver notificaciones_semanales.py)."""
+    try:
+        activas = storage.get_notification_setting(user_id)
+    except Exception as e:
+        raise HTTPException(500, _friendly_storage_error(e))
+    return {"activas": activas}
+
+
+@app.post("/api/notifications/settings")
+def set_notification_settings(body: NotificationSettingBody, user_id: str = Depends(get_verified_user_id)):
+    try:
+        storage.set_notification_setting(user_id, body.activas)
+    except Exception as e:
+        raise HTTPException(500, _friendly_storage_error(e))
+    return {"ok": True, "activas": body.activas}

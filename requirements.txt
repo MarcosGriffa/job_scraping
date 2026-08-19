@@ -28,6 +28,9 @@ supabase>=2.9  # persistencia real (api/storage_backends/supabase_backend.py)
 # algoritmo de llave asimétrica; sin el extra, PyJWT no sabe verificarlo.
 PyJWT[crypto]>=2.9
 
+# --- Avisos por mail semanales (notificaciones_semanales.py) ---
+resend>=2.5
+
 # --- Legado (bot de Telegram, opcional) ---
 # cv_adapter.py (el viejo, hardcodeado al CV de Marcos vía Node.js) quedó
 # reemplazado por cv_tailor.py — ver README_FASE1.md.

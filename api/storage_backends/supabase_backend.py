@@ -179,3 +179,55 @@ def get_applied_job_ids(user_id: str) -> set[str]:
         .data
     )
     return {row["job_id"] for row in rows}
+
+
+# ── Avisos por mail (19/08/2026) — ver notificaciones_semanales.py ──
+
+def get_seen_job_ids(user_id: str) -> set[str]:
+    """Ofertas que este usuario ya vio, por cualquier vía (búsqueda manual
+    o chequeo automático). Se usa para no repetir un aviso por mail."""
+    rows = _get_client().table("seen_jobs").select("job_id").eq("user_id", user_id).execute().data
+    return {row["job_id"] for row in rows}
+
+
+def mark_jobs_seen(user_id: str, job_ids: list[str]) -> None:
+    """Registra estas ofertas como ya vistas por este usuario. Idempotente:
+    si alguna ya estaba (mismo user_id + job_id), no la duplica ni falla."""
+    if not job_ids:
+        return
+    filas = [{"user_id": user_id, "job_id": jid} for jid in job_ids]
+    _get_client().table("seen_jobs").upsert(filas, on_conflict="user_id,job_id").execute()
+
+
+def get_notification_setting(user_id: str) -> bool:
+    """Apagado por defecto (opt-in) — si no hay fila todavía, es que nunca
+    lo prendió."""
+    rows = (
+        _get_client()
+        .table("user_settings")
+        .select("notificaciones_activas")
+        .eq("user_id", user_id)
+        .execute()
+        .data
+    )
+    return bool(rows[0]["notificaciones_activas"]) if rows else False
+
+
+def set_notification_setting(user_id: str, enabled: bool) -> None:
+    _get_client().table("user_settings").upsert(
+        {"user_id": user_id, "notificaciones_activas": enabled, "updated_at": _now()},
+        on_conflict="user_id",
+    ).execute()
+
+
+def get_users_with_notifications_enabled() -> list[str]:
+    """Para notificaciones_semanales.py: a quién chequear esta semana."""
+    rows = (
+        _get_client()
+        .table("user_settings")
+        .select("user_id")
+        .eq("notificaciones_activas", True)
+        .execute()
+        .data
+    )
+    return [row["user_id"] for row in rows]

@@ -69,13 +69,26 @@ def _normalize_key(title: str, company: str) -> str:
     return f"{norm(title)}::{norm(company)}"
 
 
-def collect_jobs(search_queries_es: list[str], search_queries_en: list[str], is_tech: bool) -> list[dict]:
+def collect_jobs(
+    search_queries_es: list[str],
+    search_queries_en: list[str],
+    is_tech: bool,
+    general_sources: list | None = None,
+) -> list[dict]:
     """Corre las fuentes generales con las queries en español y, si el CV es
     tech, las fuentes verticales con las queries en inglés. Devuelve la lista
-    combinada, deduplicada por URL exacta y por título+empresa."""
-    all_jobs = []
+    combinada, deduplicada por URL exacta y por título+empresa.
 
-    for source in GENERAL_SOURCES:
+    general_sources: por defecto usa GENERAL_SOURCES (Computrabajo + Jooble),
+    igual que siempre — ningún llamador existente cambia de comportamiento.
+    Los avisos automáticos por mail (notificaciones_semanales.py) pasan acá
+    una lista sin Jooble, para no gastarle cupo a los chequeos en segundo
+    plano: ese cupo se reserva para cuando alguien busca a mano y está
+    esperando el resultado ahí mismo."""
+    all_jobs = []
+    fuentes_generales = general_sources if general_sources is not None else GENERAL_SOURCES
+
+    for source in fuentes_generales:
         print(f"\n[{source.name}]")
         for query in search_queries_es:
             try:

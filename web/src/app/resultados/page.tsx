@@ -5,6 +5,7 @@ import Link from "next/link";
 import { getLatestResults, setApplied } from "@/lib/api";
 import type { MatchRunResponse } from "@/lib/types";
 import { JobCard } from "@/components/JobCard";
+import { NotificationToggle } from "@/components/NotificationToggle";
 
 // Cuántas ofertas se muestran. El motor ya devuelve exactamente esta
 // cantidad (ver EXPLAIN_TOP_N en pipeline.py), pero recortamos también acá
@@ -99,6 +100,8 @@ export default function ResultadosPage() {
           ))}
         </div>
       )}
+
+      <NotificationToggle />
 
       <div className="mt-8 space-y-5">
         {results.length === 0 && (
