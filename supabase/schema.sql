@@ -56,3 +56,30 @@ create table if not exists applied_jobs (
 alter table cv_profiles   enable row level security;
 alter table match_results enable row level security;
 alter table applied_jobs  enable row level security;
+
+-- ── Avisos por mail (19/08/2026) ────────────────────────────────────
+-- Ver notificaciones_semanales.py — un chequeo automático, semanal, que
+-- reusa el CV ya subido (no vuelve a pedir clasificarlo con IA) y avisa
+-- por mail solo las ofertas NUEVAS que la persona todavía no vio.
+
+-- Qué ofertas ya vio cada usuario (por búsqueda manual O por un chequeo
+-- automático) — evita mandar dos veces la misma oferta por mail, y evita
+-- que el chequeo automático vuelva a gastar IA explicando algo que ya
+-- había considerado antes (aunque no haya llegado al mail, por puntaje bajo).
+create table if not exists seen_jobs (
+  user_id   text not null,
+  job_id    text not null,
+  seen_at   timestamptz not null default now(),
+  primary key (user_id, job_id)
+);
+
+-- El interruptor de encendido/apagado. Apagado por defecto (opt-in) —
+-- nadie queda anotado solo por crear una cuenta.
+create table if not exists user_settings (
+  user_id                text primary key,
+  notificaciones_activas boolean not null default false,
+  updated_at             timestamptz not null default now()
+);
+
+alter table seen_jobs      enable row level security;
+alter table user_settings  enable row level security;

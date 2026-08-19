@@ -14,6 +14,9 @@ OJO: esto NO reemplaza ni modifica pipeline.py/cv_profile.py/semantic_match.py
      persona ya aplicó.
   4. Guarda el resultado con storage.save_match_results en vez del
      json/csv que usa pipeline.py por consola.
+  5. Marca las ofertas mostradas como "vistas" (seen_jobs) — así, si esta
+     persona más adelante prende los avisos por mail, el chequeo semanal
+     no le manda por mail algo que ya vio acá. Ver notificaciones_semanales.py.
 """
 
 from __future__ import annotations
@@ -55,6 +58,7 @@ def run_full_pipeline(user_id: str, cv_path: str, filename: str) -> dict:
         r["applied"] = False  # recién generados, ninguno puede estar aplicado todavía
 
     match_id = storage.save_match_results(user_id, cv_id, results, profile=profile)
+    storage.mark_jobs_seen(user_id, [r["job_id"] for r in results])
 
     return {
         "cv_id": cv_id,

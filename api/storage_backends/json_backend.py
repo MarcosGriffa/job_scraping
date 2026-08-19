@@ -41,6 +41,8 @@ DB_DIR = Path(__file__).resolve().parent.parent / "data" / "db"
 CV_PROFILES_FILE = DB_DIR / "cv_profiles.json"
 MATCH_RESULTS_FILE = DB_DIR / "match_results.json"
 APPLIED_JOBS_FILE = DB_DIR / "applied_jobs.json"
+SEEN_JOBS_FILE = DB_DIR / "seen_jobs.json"
+USER_SETTINGS_FILE = DB_DIR / "user_settings.json"
 
 DEFAULT_USER_ID = "default"
 
@@ -209,3 +211,40 @@ def get_applied_job_ids(user_id: str) -> set[str]:
     data = _load(APPLIED_JOBS_FILE)
     user_entries = data.get(user_id, {})
     return {job_id for job_id, info in user_entries.items() if info.get("applied")}
+
+
+# ── Avisos por mail (19/08/2026) — ver notificaciones_semanales.py ──
+# data/db/seen_jobs.json     -> { user_id: { job_id: seen_at } }
+# data/db/user_settings.json -> { user_id: {notificaciones_activas, updated_at} }
+
+def get_seen_job_ids(user_id: str) -> set[str]:
+    data = _load(SEEN_JOBS_FILE)
+    return set(data.get(user_id, {}).keys())
+
+
+def mark_jobs_seen(user_id: str, job_ids: list[str]) -> None:
+    if not job_ids:
+        return
+    with _lock:
+        data = _load(SEEN_JOBS_FILE)
+        data.setdefault(user_id, {})
+        for jid in job_ids:
+            data[user_id].setdefault(jid, _now())  # no pisa la fecha si ya estaba
+        _save(SEEN_JOBS_FILE, data)
+
+
+def get_notification_setting(user_id: str) -> bool:
+    data = _load(USER_SETTINGS_FILE)
+    return bool(data.get(user_id, {}).get("notificaciones_activas", False))
+
+
+def set_notification_setting(user_id: str, enabled: bool) -> None:
+    with _lock:
+        data = _load(USER_SETTINGS_FILE)
+        data[user_id] = {"notificaciones_activas": enabled, "updated_at": _now()}
+        _save(USER_SETTINGS_FILE, data)
+
+
+def get_users_with_notifications_enabled() -> list[str]:
+    data = _load(USER_SETTINGS_FILE)
+    return [uid for uid, v in data.items() if v.get("notificaciones_activas")]

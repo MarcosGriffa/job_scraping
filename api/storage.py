@@ -20,6 +20,13 @@ no les importa (ni deberían enterarse) cuál de los dos backends está activo:
     get_match_results(user_id, match_id=None)              -> dict | None
     mark_as_applied(user_id, job_id, applied=True)        -> None
     get_applied_job_ids(user_id)                          -> set[str]
+
+    -- Avisos por mail (19/08/2026), ver notificaciones_semanales.py:
+    get_seen_job_ids(user_id)                             -> set[str]
+    mark_jobs_seen(user_id, job_ids)                      -> None
+    get_notification_setting(user_id)                     -> bool
+    set_notification_setting(user_id, enabled)            -> None
+    get_users_with_notifications_enabled()                -> list[str]
 """
 
 from __future__ import annotations
@@ -38,9 +45,14 @@ if os.getenv("SUPABASE_URL") and os.getenv("SUPABASE_SECRET_KEY"):
         get_applied_job_ids,
         get_cv_profile,
         get_match_results,
+        get_notification_setting,
+        get_seen_job_ids,
+        get_users_with_notifications_enabled,
         mark_as_applied,
+        mark_jobs_seen,
         save_cv_profile,
         save_match_results,
+        set_notification_setting,
     )
 
     BACKEND = "supabase"
@@ -52,9 +64,14 @@ else:
         get_applied_job_ids,
         get_cv_profile,
         get_match_results,
+        get_notification_setting,
+        get_seen_job_ids,
+        get_users_with_notifications_enabled,
         mark_as_applied,
+        mark_jobs_seen,
         save_cv_profile,
         save_match_results,
+        set_notification_setting,
     )
 
     BACKEND = "json"

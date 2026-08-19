@@ -1,0 +1,44 @@
+# Chequeo semanal de matches nuevos + aviso por mail (notificaciones_semanales.py).
+#
+# Por qué GitHub Actions y no un "cron job" pago de Render: es gratis, ya
+# vivimos en este repositorio, y no hace falta un servidor corriendo todo
+# el tiempo — se prende una vez por semana, corre el script, y se apaga.
+#
+# Se puede disparar a mano también: pestaña "Actions" de este repo en
+# GitHub -> "Avisos semanales de matches" -> "Run workflow" (útil para
+# probar sin esperar al lunes).
+name: Avisos semanales de matches
+
+on:
+  schedule:
+    # Lunes 12:00 UTC = 09:00 en Argentina (UTC-3). Cambiar acá si se
+    # quiere otro día/horario — sintaxis cron estándar.
+    - cron: "0 12 * * 1"
+  workflow_dispatch: {} # permite el botón "Run workflow" manual
+
+jobs:
+  avisos:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Instalar dependencias
+        run: pip install -r requirements.txt
+
+      - name: Correr el chequeo semanal
+        env:
+          # Nunca JOOBLE_API_KEY acá a propósito — este script no debe
+          # poder usar Jooble ni por error (ver el docstring del script).
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+          COHERE_API_KEY: ${{ secrets.COHERE_API_KEY }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SECRET_KEY: ${{ secrets.SUPABASE_SECRET_KEY }}
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          SITE_URL: "https://jobscraping.vercel.app"
+          PYTHONUTF8: "1"
+          PYTHONIOENCODING: "utf-8"
+        run: python notificaciones_semanales.py
