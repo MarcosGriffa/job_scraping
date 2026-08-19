@@ -16,17 +16,29 @@ const navItems = [
 // Fase 3 (18/08/2026): el botón "Ingresar" (antes deshabilitado, "Próximamente")
 // ahora refleja la sesión real. Client Component porque necesita leer el
 // estado de auth y reaccionar a login/logout sin recargar la página.
+// Con Google, Supabase guarda el nombre real en user_metadata (Google lo
+// manda siempre) — mostramos eso en vez del mail, es más prolijo y más
+// corto. Con mail+contraseña no hay nombre de ningún lado, ahí seguimos
+// mostrando el mail como antes (confirmado contra una cuenta real: Google
+// deja tanto "full_name" como "name" con el mismo valor; alcanza con
+// cualquiera de los dos).
+function nombreParaMostrar(user: { email?: string; user_metadata?: Record<string, unknown> } | null | undefined) {
+  if (!user) return null;
+  const meta = user.user_metadata ?? {};
+  return (meta.full_name as string) || (meta.name as string) || user.email || null;
+}
+
 export function Header() {
   const router = useRouter();
-  const [email, setEmail] = useState<string | null | undefined>(undefined); // undefined = todavía no se sabe
+  const [nombre, setNombre] = useState<string | null | undefined>(undefined); // undefined = todavía no se sabe
 
   useEffect(() => {
     const supabase = createClient();
 
-    supabase.auth.getUser().then(({ data }) => setEmail(data.user?.email ?? null));
+    supabase.auth.getUser().then(({ data }) => setNombre(nombreParaMostrar(data.user)));
 
     const { data: sub } = supabase.auth.onAuthStateChange((_event, session) => {
-      setEmail(session?.user?.email ?? null);
+      setNombre(nombreParaMostrar(session?.user));
     });
     return () => sub.subscription.unsubscribe();
   }, []);
@@ -58,10 +70,10 @@ export function Header() {
           ))}
         </nav>
 
-        {email ? (
+        {nombre ? (
           <div className="flex items-center gap-3">
             <span className="hidden max-w-[160px] truncate text-sm font-semibold text-brown-body sm:inline">
-              {email}
+              {nombre}
             </span>
             <button
               type="button"
