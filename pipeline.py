@@ -62,11 +62,26 @@ EMBEDDING_TOP_K = 30
 EXPLAIN_TOP_N = 10
 
 
-def _normalize_key(title: str, company: str) -> str:
+def _normalize_key(title: str, company: str) -> str | None:
     """Clave para detectar ofertas duplicadas aunque la URL tenga un hash
-    de tracking distinto: título + empresa, en minúscula y sin espacios extra."""
-    norm = lambda s: re.sub(r"\s+", " ", (s or "").strip().lower())
-    return f"{norm(title)}::{norm(company)}"
+    de tracking distinto: título + empresa, en minúscula y sin espacios extra.
+
+    Devuelve None si la empresa viene vacía — encontrado el 20/08/2026
+    investigando por qué Jooble aportaba 100 ofertas crudas y ninguna
+    sobrevivía hasta el ranking final: Jooble (metabuscador) a menudo no
+    trae el campo "company", y con título+empresa vacía, ofertas REALES y
+    DISTINTAS con un título genérico ("Analista de Datos") colapsaban en
+    la misma clave — la primera procesada ganaba (casi siempre Computrabajo,
+    que corre primero en GENERAL_SOURCES) y el resto se descartaba como
+    "duplicado" sin serlo. Con empresa vacía, título+empresa ya no alcanza
+    para confirmar que es la misma oferta — se vuelve a la URL exacta nomás
+    para esos casos (ver collect_jobs), que es más conservador: en el peor
+    caso deja pasar algún duplicado real, nunca borra una oferta distinta."""
+    company_norm = re.sub(r"\s+", " ", (company or "").strip().lower())
+    if not company_norm:
+        return None
+    title_norm = re.sub(r"\s+", " ", (title or "").strip().lower())
+    return f"{title_norm}::{company_norm}"
 
 
 def collect_jobs(
@@ -77,7 +92,8 @@ def collect_jobs(
 ) -> list[dict]:
     """Corre las fuentes generales con las queries en español y, si el CV es
     tech, las fuentes verticales con las queries en inglés. Devuelve la lista
-    combinada, deduplicada por URL exacta y por título+empresa.
+    combinada, deduplicada por URL exacta y por título+empresa (esto último
+    solo si la empresa no viene vacía — ver _normalize_key).
 
     general_sources: por defecto usa GENERAL_SOURCES (Computrabajo + Jooble),
     igual que siempre — ningún llamador existente cambia de comportamiento.
@@ -118,10 +134,13 @@ def collect_jobs(
         key = _normalize_key(job.get("title", ""), job.get("company", ""))
         if url and url in seen_urls:
             continue
-        if key in seen_keys:
+        # key es None cuando la empresa vino vacía — no deduplicar por
+        # título solo, dejar pasar (la URL exacta ya se chequeó arriba).
+        if key is not None and key in seen_keys:
             continue
         seen_urls.add(url)
-        seen_keys.add(key)
+        if key is not None:
+            seen_keys.add(key)
         unique_jobs.append(job)
 
     print(f"\nTotal ofertas encontradas: {len(all_jobs)} | Únicas: {len(unique_jobs)}")
