@@ -1,0 +1,36 @@
+# Workflow TEMPORAL, solo para consultar el estado real del dominio propio
+# en Resend (verificado o pendiente, y qué registros DNS faltan). Se borra
+# apenas se confirma — no toca nada de producción, solo lee vía la API de
+# Resend con la key ya guardada en los Secrets del repo.
+name: "[TEMPORAL] Estado del dominio en Resend"
+
+on:
+  workflow_dispatch: {}
+
+jobs:
+  chequeo:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - run: pip install -r requirements.txt
+      - name: Consultar dominios en Resend
+        env:
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          PYTHONUTF8: "1"
+          PYTHONIOENCODING: "utf-8"
+        run: |
+          python -c "
+          import resend, os, json
+          resend.api_key = os.environ['RESEND_API_KEY']
+          dominios = resend.Domains.list()
+          print('=== DOMINIOS EN LA CUENTA ===')
+          print(json.dumps(dominios, indent=2, default=str))
+          for d in dominios.get('data', []):
+              print()
+              print(f\"=== DETALLE: {d.get('name')} (id={d.get('id')}) ===\")
+              detalle = resend.Domains.get(d['id'])
+              print(json.dumps(detalle, indent=2, default=str))
+          "
