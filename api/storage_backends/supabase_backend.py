@@ -195,7 +195,15 @@ def mark_jobs_seen(user_id: str, job_ids: list[str]) -> None:
     si alguna ya estaba (mismo user_id + job_id), no la duplica ni falla."""
     if not job_ids:
         return
-    filas = [{"user_id": user_id, "job_id": jid} for jid in job_ids]
+    # dict.fromkeys en vez de set(): dedupea preservando el primer orden, y
+    # sobre todo evita el error real de Postgres "ON CONFLICT DO UPDATE
+    # command cannot affect row a second time" cuando el mismo job_id
+    # aparece dos veces en la lista de entrada (pasa de verdad: una oferta
+    # puede repetirse entre dos corridas de búsqueda distintas del mismo
+    # usuario que se procesan juntas, como en el backfill manual o si
+    # alguna vez se llama con resultados de varias corridas a la vez).
+    ids_unicos = list(dict.fromkeys(job_ids))
+    filas = [{"user_id": user_id, "job_id": jid} for jid in ids_unicos]
     _get_client().table("seen_jobs").upsert(filas, on_conflict="user_id,job_id").execute()
 
 
