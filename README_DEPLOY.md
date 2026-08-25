@@ -106,9 +106,19 @@ Guardá — Render reinicia el servicio solo con la variable nueva.
 - **500 al subir CV**: mirá los **Logs** del servicio en Render — casi
   siempre es una clave que falta o está mal copiada.
 
-## Un dominio propio (opcional, no hace falta para publicar)
+## Un dominio propio
 
-Tanto Vercel como Render aceptan agregar un dominio propio (tipo
-`empatia-nextstep.com.ar`) desde su panel, gratis en la config — lo único
-pago es comprar el dominio en sí (~USD 10-15/año). No es necesario para
-tener el sitio funcionando en público; se puede sumar después.
+Comprado el 20/08/2026: **`empatianextstep.com`**, registrado en
+Cloudflare (~USD 10/año, fijo, sin subir al renovar). Verificado en
+Resend ese mismo día — desde entonces los avisos por mail salen de
+`avisos@empatianextstep.com` en vez del dominio de prueba `resend.dev`
+(que solo entregaba a la casilla dueña de la cuenta). Probado de punta a
+punta con un mail real: llegó a la bandeja de entrada, no a spam. Ver
+`api/emailer.py` para el detalle técnico.
+
+Lo que **todavía no** usa este dominio: la web (sigue en
+`jobscraping.vercel.app`) y el motor (sigue en
+`empatia-nextstep-motor.onrender.com`). Tanto Vercel como Render aceptan
+agregar un dominio propio desde su panel, gratis en la config — es un
+paso aparte, pendiente, no necesario para que el sitio funcione en
+público.
