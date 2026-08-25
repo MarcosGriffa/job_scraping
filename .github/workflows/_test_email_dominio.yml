@@ -1,0 +1,36 @@
+# Workflow TEMPORAL, solo para confirmar que el mail sale de verdad desde
+# el dominio propio (avisos@empatianextstep.com) ya verificado en Resend.
+# Se borra apenas se confirma (ver notificaciones_semanales.py para el
+# workflow real, que queda).
+name: "[TEMPORAL] Prueba de mail desde dominio propio"
+
+on:
+  workflow_dispatch: {}
+
+jobs:
+  prueba:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - run: pip install -r requirements.txt
+      - name: Mandar mail de prueba desde el dominio nuevo
+        env:
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          RESEND_FROM_EMAIL: "EmpatÍA | NextStep <avisos@empatianextstep.com>"
+          SITE_URL: "https://jobscraping.vercel.app"
+          PYTHONUTF8: "1"
+          PYTHONIOENCODING: "utf-8"
+        run: |
+          python -c "
+          from api.emailer import enviar_resumen_semanal, REMITENTE
+          print('Remitente usado:', REMITENTE)
+          ofertas = [
+              {'title': 'Analista de Datos Junior (PRUEBA DOMINIO PROPIO)', 'company': 'Empresa de prueba', 'location': 'CABA', 'score': 88, 'url': 'https://jobscraping.vercel.app/resultados'},
+              {'title': 'Desarrollador Python (PRUEBA DOMINIO PROPIO)', 'company': 'Otra empresa de prueba', 'location': 'Remoto', 'score': 76, 'url': 'https://jobscraping.vercel.app/resultados'},
+          ]
+          enviar_resumen_semanal('marquitosgriffa@gmail.com', 'Marcos', ofertas)
+          print('ENVIADO OK')
+          "
