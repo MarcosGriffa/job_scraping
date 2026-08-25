@@ -1,11 +1,15 @@
 """
 emailer.py — Envío del resumen semanal de matches nuevos, con Resend.
 
-Por qué Resend: tiene un plan gratis generoso (3.000 mails/mes) y se puede
-mandar sin tener un dominio propio todavía (usa su dominio de prueba,
-resend.dev) — el día que haya un dominio real, cambia con una variable de
-entorno, sin tocar código. Ver la comparación completa en la conversación
-del 19/08/2026.
+Por qué Resend: tiene un plan gratis generoso (3.000 mails/mes). Al
+principio se mandaba con el dominio de prueba de Resend (resend.dev), que
+solo entrega a la casilla dueña de la cuenta — no servía para usuarios
+reales. Desde el 20/08/2026 hay un dominio propio verificado en Resend
+(empatianextstep.com, registrado en Cloudflare), así que el remitente por
+defecto ya usa ese dominio y manda a cualquier destinatario. Se puede
+seguir pisando con RESEND_FROM_EMAIL sin tocar código si hiciera falta
+(ej. para pruebas). Ver la comparación de dominios en la conversación del
+19-20/08/2026.
 
 Necesita RESEND_API_KEY en el .env (o en las variables de entorno de
 donde corra notificaciones_semanales.py — ver ese archivo y el workflow
@@ -19,7 +23,7 @@ import os
 
 import resend
 
-REMITENTE = os.getenv("RESEND_FROM_EMAIL", "EmpatÍA | NextStep <onboarding@resend.dev>")
+REMITENTE = os.getenv("RESEND_FROM_EMAIL", "EmpatÍA | NextStep <avisos@empatianextstep.com>")
 SITIO_URL = os.getenv("SITE_URL", "https://jobscraping.vercel.app")
 
 _configurado = False

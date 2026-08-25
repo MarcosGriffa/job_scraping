@@ -38,6 +38,11 @@ jobs:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SECRET_KEY: ${{ secrets.SUPABASE_SECRET_KEY }}
           RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          # No es secreto (es la dirección remitente, pública en cualquier
+          # mail que llegue) — dominio propio verificado en Resend desde el
+          # 20/08/2026. Explícito acá para que el remitente real quede
+          # documentado en este archivo, no escondido en un default de código.
+          RESEND_FROM_EMAIL: "EmpatÍA | NextStep <avisos@empatianextstep.com>"
           SITE_URL: "https://jobscraping.vercel.app"
           PYTHONUTF8: "1"
           PYTHONIOENCODING: "utf-8"
