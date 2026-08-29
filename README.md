@@ -1,177 +1,230 @@
-# Observatorio IT Junior
+# EmpatÍA | NextStep
 
-Pipeline automatizado que scrapea ofertas de trabajo IT junior en Argentina, las ranquea contra tu perfil y genera CVs adaptados con IA — todo controlable por Telegram desde el celular.
+**Motor de matching entre CVs y ofertas de empleo, con IA — para cualquier
+rubro, no solo tecnología.** Subís tu CV, el sistema entiende a qué te
+dedicás, busca en seis portales de empleo a la vez y te devuelve las
+ofertas rankeadas con una explicación real de por qué encajás (o por qué
+no).
 
----
-
-## ¿Qué hace?
-
-1. **Scrapea** ofertas IT junior de Computrabajo Argentina (Python, Data, QA, Backend, etc.)
-2. **Enriquece** cada oferta con IA (Groq / LLaMA): detecta stack tecnológico, seniority y modalidad
-3. **Rankea** las ofertas contra tu CV usando keyword matching sobre el stack extraído
-4. **Manda** el Top 10 del día a Telegram con score, empresa, ubicación y tecnologías
-5. **Genera CVs** adaptados a cada puesto elegido usando IA (Groq) y los manda como `.docx` por Telegram, junto con el link para aplicar
-
-Todo se controla desde Telegram con comandos de texto, sin abrir la computadora.
+🔗 **[empatianextstep.com](https://empatianextstep.com)** · [Dashboard de
+Power BI](#dashboard-de-power-bi-modelo-de-datos-y-analítica) · [Cómo está
+armado](#arquitectura)
 
 ---
 
-## Demo
+## El problema que resuelve
+
+Buscar trabajo es repetir la misma tarea aburrida: entrar a cinco portales,
+buscar los mismos términos, leer avisos casi iguales y decidir a ojo cuáles
+valen la pena. Los buscadores filtran por palabra clave, así que un aviso de
+"Analista de Datos Jr" no aparece si buscaste "Data Analyst" — y nada te
+dice si realmente encajás con el puesto o te falta la mitad de lo que piden.
+
+Este proyecto automatiza todo eso y agrega la parte que ningún portal hace:
+**leer tu CV y el aviso, y explicarte el match en castellano**.
+
+Y no está atado a IT. La clasificación del CV es abierta: funciona igual con
+un perfil de ventas, de salud o de laboratorio — el sistema deduce el rubro
+y arma sus propias búsquedas.
+
+---
+
+## Cómo funciona
 
 ```
-Vos → /scrape ok
-
-Bot → Paso 1/7: Scrapeando Computrabajo...
-Bot → Paso 2/7: Limpiando datos...
-Bot → Paso 3/7: Enriqueciendo con IA...
-...
-Bot → Top 10 Matches del día:
-      [0] Analista de Datos Jr — Score 100/100
-      [1] Desarrollador Backend Jr — Score 95/100
-      ...
-
-Vos → 0,4
-
-Bot → Generando CVs para puestos 0,4...
-Bot → [archivo] CV_Marcos_01_Analista de Datos Jr.docx
-Bot → Aplicar: https://ar.computrabajo.com/...
-Bot → [archivo] CV_Marcos_02_Desarrollador Backend Jr.docx
-Bot → Aplicar: https://ar.computrabajo.com/...
+        Tu CV (PDF)
+             │
+             ▼
+   ┌──────────────────────┐
+   │ 1. Clasificación     │  LLM chico (Groq): deduce rubro, seniority,
+   │    del perfil        │  skills y arma los términos de búsqueda
+   └──────────┬───────────┘
+              ▼
+   ┌──────────────────────┐
+   │ 2. Búsqueda          │  6 portales en paralelo:
+   │    multi-portal      │  Computrabajo · Jooble (generales)
+   │                      │  RemoteOK · Jobicy · Himalayas ·
+   └──────────┬───────────┘  WeWorkRemotely (tech)
+              ▼
+   ┌──────────────────────┐
+   │ 3. Filtro semántico  │  Embeddings (Cohere multilingüe):
+   │    (etapa barata)    │  "Analista de Datos" ≈ "Data Analyst Jr"
+   └──────────┬───────────┘  aunque no compartan una sola palabra
+              ▼
+   ┌──────────────────────┐
+   │ 4. Explicación       │  LLM grande (Groq) lee CV + aviso completos
+   │    (etapa cara)      │  y devuelve score 0-100, por qué matcheás,
+   └──────────┬───────────┘  qué te falta, y un veredicto en castellano
+              ▼
+   Ranking explicado + CV adaptado a cada oferta (.docx)
 ```
+
+**La decisión de diseño central son las dos etapas.** Pasar cada aviso por
+un LLM grande sería lento y caro; filtrar solo por palabra clave sería
+pobre. La etapa 3 usa embeddings (prácticamente gratis) para descartar el
+grueso del ruido, y la etapa 4 gasta el modelo caro solo en el puñado de
+finalistas. Resultado: entendimiento real por centavos de dólar por
+búsqueda.
+
+---
+
+## Dashboard de Power BI: modelo de datos y analítica
+
+El mismo esquema que sirve a la aplicación se explota como modelo
+analítico. No es un tablero decorativo sobre datos planos: la base guarda
+las ofertas como **JSON anidado** dentro de Postgres, así que hubo que
+aplanarlas a un modelo dimensional utilizable.
+
+![Dashboard de Power BI del proyecto](bi/capturas/dashboard-portfolio.png)
+
+**Qué incluye este repo** (carpeta [`bi/`](bi/)):
+
+| | |
+|---|---|
+| **Modelo** | Esquema estrella — `Fact_Ofertas` (grano: una oferta evaluada) + `Dim_CV`, `Dim_CV_Skills` y tabla calendario en DAX, con relación activa e inactiva (`USERELATIONSHIP`) |
+| **SQL** | [3 vistas de Postgres](bi/sql/) que aplanan los `jsonb` anidados y cruzan el estado real de "aplicado" contra su tabla de eventos |
+| **DAX** | 13 medidas documentadas: tasa de aplicación, % de alta compatibilidad, variación mes a mes, similarity vs. score |
+| **Datos** | [Generador reproducible](bi/datos_demo/generar_datos_demo.py) de dataset sintético, con la forma exacta de las vistas reales |
+
+📄 **[Documentación completa del dashboard →](bi/README.md)** — modelo,
+medidas y el paso a paso para reconstruirlo.
+
+> ⚠️ **Los datos del dashboard son sintéticos.** El proyecto es reciente y
+> todavía no tiene volumen real de uso, así que el tablero corre sobre un
+> dataset generado con la forma exacta del modelo productivo (mismas
+> columnas, mismos portales, proporciones y rangos verosímiles). Es una
+> decisión deliberada, no un dato inflado: el modelo dimensional, las
+> relaciones y el DAX son los mismos que correrían contra la base real —
+> solo cambia el origen de datos.
+
+Un detalle de modelado que vale la pena mirar: el campo `applied` que viaja
+dentro del JSON de resultados **nunca se actualiza** después de guardarse
+(se escribe una vez y se parchea en memoria al leer). Usarlo para analítica
+histórica daría siempre cero. Por eso la vista
+[`vw_bi_ofertas`](bi/sql/03_vw_bi_ofertas.sql) ignora ese campo y hace
+`LEFT JOIN` contra `applied_jobs`, que es la tabla que sí registra el
+evento con su fecha.
 
 ---
 
 ## Arquitectura
 
 ```
-Telegram (celular)
-      │
-      │  long polling
-      ▼
-bot_listener.py  ◄── único proceso corriendo, orquesta todo
-      │
-      ├── /scrape ok ──► computrabajo.py  → raw CSV
-      │                  clean.py         → CSV limpio
-      │                  enrich.py        → CSV + ai_stack, ai_seniority (Groq, paralelo)
-      │                  load_db.py       → SQLite
-      │                  match.py         → top_matches.csv (keyword scoring)
-      │                  scrape_top.py    → top_matches_full.csv + descripciones
-      │                  bot_daily.py     → lista Top 10 a Telegram
-      │
-      └── "0,4,6" ─────► cv_adapter.py   → CV_Marcos_01_*.docx (Groq + Node/docx)
-                                            envia .docx + URL por Telegram
+Navegador (Next.js + Tailwind, en Vercel)
+     │  subís el CV · ves los matches · marcás "ya apliqué"
+     ▼
+API (FastAPI, en Render)
+     │  orquesta el motor, autentica, limita el uso
+     ▼
+Motor de matching (Python)          Supabase (Postgres)
+  cv_profile.py     → clasifica ←→   CVs, corridas de matching,
+  pipeline.py       → busca          ofertas aplicadas, avisos
+  semantic_match.py → rankea               │
+                                           ▼
+                                  Power BI (modelo analítico)
 ```
+
+**Además:**
+
+- **Avisos semanales por mail** — un cron de GitHub Actions revisa cada
+  lunes si hay ofertas nuevas para quienes lo activaron y manda solo lo que
+  esa persona todavía no vio (Resend, dominio propio verificado). Opt-in:
+  apagado por defecto.
+- **CV adaptado por oferta** — genera bajo demanda un `.docx` reescrito
+  para ese aviso puntual, y lo cachea.
+- **Cuentas reales** con Supabase Auth, límite de 2 búsquedas diarias por
+  persona y política de privacidad propia.
 
 ---
 
-## Stack tecnológico
+## Stack
 
 | Capa | Tecnología |
 |---|---|
-| Scraping | `requests` + `BeautifulSoup4` |
-| IA / LLM | Groq API — `llama-3.3-70b-versatile` + `llama-3.1-8b-instant` |
-| PDF | `PyMuPDF` |
-| Datos | `pandas`, `SQLite` |
-| Generación de CV | Node.js + `docx` npm package |
-| Bot | Telegram Bot API (long polling) |
-| Lenguaje | Python 3.13 |
+| **Frontend** | Next.js 16, React 19, Tailwind v4 (Vercel) |
+| **Backend** | Python 3.13, FastAPI (Render) |
+| **Base de datos** | Supabase / PostgreSQL — RLS activo, `jsonb` |
+| **IA — clasificación y explicación** | Groq (`gpt-oss-20b` / `gpt-oss-120b`) |
+| **IA — filtro semántico** | Cohere `embed-multilingual-v3.0` |
+| **Analítica / BI** | Power BI Desktop, DAX, vistas SQL |
+| **Scraping** | `requests` + `BeautifulSoup4`, 6 fuentes |
+| **Automatización** | GitHub Actions (cron semanal), Resend |
 
 ---
 
-## Comandos del bot
+## Decisiones técnicas que valen la pena contar
 
-| Comando | Acción |
-|---|---|
-| `/scrape` | Muestra advertencia y pide confirmación |
-| `/scrape ok` | Pipeline completo desde cero (~12 min) |
-| `/refresh` | Solo recalcula matches y manda nueva lista (~1 min) |
-| `/last` | Reenvía el último Top 10 sin re-scrapear |
-| `/status` | Muestra qué está procesando y hace cuánto |
-| `/help` | Menú de comandos |
-| `0` o `0,4,6` | Genera CVs adaptados para esos puestos |
+**El motor pedía 768 MB de RAM y el hosting gratuito da 512.** El filtro
+semántico corría con `sentence-transformers` + `torch` en local: 800 MB de
+dependencias y un modelo de 400 MB descargado en cada arranque. Migrarlo a
+la API de Cohere bajó el motor a ~150 MB — pasó a entrar en un plan gratis
+sin perder calidad de matching, y toda la dependencia quedó aislada en una
+sola función (`_embed()`), así que cambiar de proveedor es reescribir eso y
+nada más.
+
+**Las búsquedas devolvían cero desde la web pero funcionaban por consola.**
+Windows corría el motor con una codificación heredada que no sabe escribir
+la flecha `→` que el pipeline imprime al mostrar progreso. Cada búsqueda
+moría en silencio dentro de un `print`. Se arregló forzando UTF-8 al
+arrancar la API.
+
+**Un `upsert` que rompía solo con datos reales.** Marcar ofertas como
+"vistas" fallaba con el error de Postgres *"ON CONFLICT DO UPDATE command
+cannot affect row a second time"* cuando el mismo aviso aparecía dos veces
+en la misma tanda. Se resolvió deduplicando con `dict.fromkeys()`, que
+además preserva el orden — a diferencia de un `set`.
+
+**Cuando Groq dio de baja toda la línea Llama**, el clasificador empezó a
+devolver 404 y se rompió la subida de CV. Los modelos quedaron
+centralizados en una constante por archivo, verificados contra la lista
+real de la cuenta.
 
 ---
 
-## Instalación
-
-### Requisitos previos
-- Python 3.11+
-- Node.js 18+ con el paquete `docx` instalado globalmente:
-  ```bash
-  npm install -g docx
-  ```
-
-### Setup
+## Correrlo localmente
 
 ```bash
-# 1. Clonar el repo
-git clone https://github.com/TU_USUARIO/job_scraping.git
+git clone https://github.com/MarcosGriffa/job_scraping.git
 cd job_scraping
 
-# 2. Crear entorno virtual e instalar dependencias
-python -m venv venv
-venv\Scripts\activate        # Windows
+python -m venv venv && venv\Scripts\activate    # Windows
 pip install -r requirements.txt
 
-# 3. Crear archivo .env con tus credenciales
-cp .env.example .env
-# Editar .env con tus API keys
+cp .env.example .env    # completar con tus API keys
 ```
 
-### Variables de entorno (`.env`)
+Necesitás claves gratuitas de [Groq](https://console.groq.com) y
+[Cohere](https://dashboard.cohere.com); opcionalmente
+[Supabase](https://supabase.com) (sin ella guarda en archivos locales) y
+[Jooble](https://jooble.org/api/about).
 
-```env
-TELEGRAM_BOT_TOKEN=tu_token_aqui
-TELEGRAM_CHAT_ID=tu_chat_id_aqui
-GROQ_API_KEY=tu_api_key_aqui
-```
-
-- **Telegram Bot Token**: crear un bot con [@BotFather](https://t.me/botfather)
-- **Chat ID**: obtenerlo con [@userinfobot](https://t.me/userinfobot)
-- **Groq API Key**: crear cuenta gratuita en [console.groq.com](https://console.groq.com)
-
-### Agregar tu CV
-
-Reemplazá `CV_Marcos_Griffa_v2.pdf` con tu CV en PDF y actualizá la ruta en `cv_adapter.py` y `match.py`.
-
-### Correr el bot
+**En Windows:** doble clic en `INICIAR_WEB.bat` levanta todo.
+**Manual**, en dos terminales:
 
 ```bash
-python bot_listener.py
+python -m uvicorn api.main:app --reload --port 8000   # motor
+npm --prefix web run dev                              # web → localhost:3000
 ```
-
-Para que arranque automáticamente al iniciar Windows, agregá un acceso directo a `start_bot.bat` en la carpeta de Inicio (`shell:startup`).
 
 ---
 
-## Estructura del proyecto
+## Documentación
 
-```
-job_scraping/
-├── bot_listener.py      # Bot principal — orquesta todo via Telegram
-├── bot_daily.py         # Envía el Top 10 a Telegram
-├── computrabajo.py      # Scraper de ofertas IT
-├── clean.py             # Limpieza y normalización del CSV
-├── enrich.py            # Enriquecimiento con IA (stack, seniority)
-├── load_db.py           # Persistencia en SQLite
-├── match.py             # Scoring de ofertas contra el perfil
-├── scrape_top.py        # Scrapea descripción completa del Top 10
-├── cv_adapter.py        # Genera CVs adaptados con IA
-├── start_bot.bat        # Script de arranque para Windows
-├── requirements.txt
-├── .env.example
-└── data/                # Generado en runtime (ignorado por git)
-    ├── computrabajo_raw.csv
-    ├── computrabajo_enriched.csv
-    ├── top_matches.csv
-    ├── top_matches_full.csv
-    ├── observatorio.db
-    └── cvs_adaptados/
-```
+| Documento | Contenido |
+|---|---|
+| [`bi/README.md`](bi/README.md) | Dashboard de Power BI: modelo, DAX, paso a paso |
+| [`README_FASE2.md`](README_FASE2.md) | La web actual: cómo está armada y por qué |
+| [`README_FASE1.md`](README_FASE1.md) | Evolución del motor de matching |
+| [`README_BOT_TELEGRAM.md`](README_BOT_TELEGRAM.md) | La versión original: pipeline + bot de Telegram |
+| [`README_DEPLOY.md`](README_DEPLOY.md) | Publicar en Vercel + Render, paso a paso |
+| [`supabase/schema.sql`](supabase/schema.sql) | Esquema de la base, comentado |
 
 ---
 
 ## Autor
 
-**Marcos Griffa** — Estudiante de Ciencia de Datos (UBA)  
-[LinkedIn](https://linkedin.com/in/marcos-griffa-605aa3259) · [GitHub](https://github.com/MarcosGriffa) · [Portfolio](https://portfolio-griffa.vercel.app)
+**Marcos Griffa** — Estudiante de Lic. en Ciencia de Datos (UBA)
+
+[LinkedIn](https://linkedin.com/in/marcos-griffa-605aa3259) ·
+[GitHub](https://github.com/MarcosGriffa) ·
+[Portfolio](https://portfolio-griffa.vercel.app)

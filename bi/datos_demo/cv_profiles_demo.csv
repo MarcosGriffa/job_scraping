@@ -1,0 +1,17 @@
+cv_id,user_id,area,is_tech,seniority,cantidad_skills,created_at
+9d91c0a0-bb07-4bd2-8bb5-b2f44bf9541e,anon_ed6d58cb30,Marketing,False,junior,5,2026-04-23
+561e3fe0-1a3e-4cf9-b523-bfd2f6cae807,anon_5b295aa731,Marketing,False,junior,4,2026-05-21
+cc701a91-f81f-474c-9793-8eda7c6597f2,anon_97c39b14e1,Administración,False,semi senior,5,2026-05-11
+3c252707-346e-41a7-b92b-c45107c0bcfa,anon_d7db18b868,Administración,False,junior,4,2026-07-07
+1cf838d5-dde8-415b-b9a0-0e6a31a30cfa,anon_395852f410,Data/Analytics,True,senior,8,2026-06-15
+9110f56e-6b0e-4923-a9a6-c82dcf59a9d0,anon_e08127767b,Administración,False,semi senior,5,2026-05-29
+b7af9d33-f8ab-4050-8976-6c415f2489de,anon_62fc33855c,Administración,False,senior,4,2026-07-03
+5335ec57-4922-40c6-9cec-107f4289e49c,anon_6ba18b6f64,Desarrollo de Software,True,junior,9,2026-06-09
+f99e4ba8-b5ce-446a-a65a-940fdff08be5,anon_035773a775,Biología,False,semi senior,4,2026-06-20
+b1ab60a2-7d29-46eb-a01d-ea440ff8b6c5,anon_62fc33855c,Desarrollo de Software,True,junior,8,2026-05-06
+37cd8289-c660-4543-9e5b-131c91f4741e,anon_d7db18b868,Administración,False,semi senior,5,2026-08-05
+8fd746c7-0216-4c6d-ad3f-902f4903fd0b,anon_5b295aa731,Administración,False,senior,4,2026-07-08
+e884cb86-e3e7-474d-85fb-1e8f90776e01,anon_62fc33855c,Marketing,False,semi senior,5,2026-06-27
+9093f18b-6049-47a7-9d60-db13b09a7130,anon_5b295aa731,Desarrollo de Software,True,junior,4,2026-06-16
+6edcfca2-e1f3-48b7-ba2f-8ec83a981795,anon_035773a775,Marketing,False,junior,4,2026-06-22
+40a15bf6-452a-46a2-b65b-693a5235ec82,anon_6ba18b6f64,Data/Analytics,True,senior,6,2026-08-03

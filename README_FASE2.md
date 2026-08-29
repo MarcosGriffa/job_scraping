@@ -1,5 +1,8 @@
 # Fase 2 — "EmpatÍA | NextStep": el motor de matching, ahora como web
 
+> Para la vista general del proyecto, ver el [README principal](README.md).
+> Este documento entra en el detalle de cómo está armada la web.
+
 La Fase 1 (ver `README_FASE1.md`) construyó el "cerebro" — el motor que lee
 un CV, entiende el rubro, busca ofertas en varios portales y arma un
 ranking explicado con IA — y corría por consola. Esta fase le pone una cara
@@ -187,6 +190,21 @@ se puede volver a pegar: no borra nada si ya existen.
 Si algún día se quiere probar sin Supabase (por ejemplo sin internet),
 alcanza con vaciar esas tres variables del `.env`: el sistema cae solo a
 guardar en archivos locales, sin tocar una línea de código.
+
+---
+
+## Dashboard de Power BI
+
+Además de servir a la web, ese mismo esquema se puede analizar: en
+`bi/` hay un modelo de datos completo para Power BI (esquema estrella,
+vistas SQL que aplanan los jsonb, medidas DAX y el paso a paso para
+armar el tablero desde cero) — ver **`bi/README.md`**.
+
+Como el proyecto recién arrancó no hay todavía volumen real de uso, así
+que la captura que se muestra como pieza de portfolio usa un dataset
+**sintético** (mismas fuentes y proporciones reales, datos inventados) —
+el día que haya usuarios de verdad, el modelo queda igual y solo cambia
+el origen de datos.
 
 ---
 
