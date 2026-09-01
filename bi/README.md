@@ -17,6 +17,8 @@ reclutador lo vea en 30 segundos y entienda de qué se trata.
 > de datos (ver [última sección](#cuando-haya-datos-reales)). Esto está
 > aclarado también dentro del propio dashboard (ver Paso 6, punto J).
 
+![Dashboard de Power BI del proyecto](capturas/dashboard-portfolio.png)
+
 ---
 
 ## 1. El esquema real detrás de esto
