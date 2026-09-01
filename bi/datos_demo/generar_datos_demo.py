@@ -205,8 +205,14 @@ def generar_ofertas(cvs: list[dict]) -> list[dict]:
                 )
 
                 score = max(30, min(98, round(random.triangular(35, 98, 72))))
+                # Entero 0-100, en la misma escala que score — igual que la
+                # vista vw_bi_ofertas, que también la expone escalada (ver el
+                # comentario ahí). Entero a propósito: un decimal 0-1 escrito
+                # con punto ("0.6511") lo malinterpreta cualquier herramienta
+                # con configuración regional española, que lee ese punto como
+                # separador de miles y entiende 6511.
                 similarity = round(
-                    max(0.25, min(0.97, score / 100 + random.gauss(0, 0.07))), 4
+                    max(25, min(97, score + random.gauss(0, 7)))
                 )
                 # Más score => menos gaps, en promedio.
                 gaps_max = 3 if score < 70 else 1

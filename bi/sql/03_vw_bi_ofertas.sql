@@ -26,7 +26,15 @@ select
   oferta ->> 'company'     as empresa,
   oferta ->> 'location'    as ubicacion,
   oferta ->> 'source'      as fuente,
-  (oferta ->> 'similarity')::numeric as similarity,
+  -- similarity nace como similitud coseno 0-1 (ver semantic_match.py), pero
+  -- se expone en escala 0-100 igual que score, por dos razones:
+  --   1. Deja las dos métricas del pipeline en la MISMA unidad, así el
+  --      gráfico de dispersión "similarity vs score" se lee directo: los
+  --      dos ejes van de 0 a 100 y la diagonal es "coinciden".
+  --   2. Evita un decimal 0-1 que, exportado a CSV, cualquier herramienta
+  --      con configuración regional española interpreta mal (lee el punto
+  --      de "0.6511" como separador de miles y entiende 6511).
+  round((oferta ->> 'similarity')::numeric * 100) as similarity,
   (oferta ->> 'score')::numeric      as score,
   jsonb_array_length(coalesce(oferta -> 'matches', '[]'::jsonb)) as cantidad_matches,
   jsonb_array_length(coalesce(oferta -> 'gaps', '[]'::jsonb))    as cantidad_gaps,

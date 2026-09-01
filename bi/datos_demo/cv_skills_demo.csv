@@ -1,85 +1,85 @@
 cv_id,user_id,skill
-9d91c0a0-bb07-4bd2-8bb5-b2f44bf9541e,anon_ed6d58cb30,Google Ads
-9d91c0a0-bb07-4bd2-8bb5-b2f44bf9541e,anon_ed6d58cb30,Email marketing
-9d91c0a0-bb07-4bd2-8bb5-b2f44bf9541e,anon_ed6d58cb30,Canva
-9d91c0a0-bb07-4bd2-8bb5-b2f44bf9541e,anon_ed6d58cb30,Copywriting
-9d91c0a0-bb07-4bd2-8bb5-b2f44bf9541e,anon_ed6d58cb30,Redes sociales
-561e3fe0-1a3e-4cf9-b523-bfd2f6cae807,anon_5b295aa731,Google Ads
-561e3fe0-1a3e-4cf9-b523-bfd2f6cae807,anon_5b295aa731,Email marketing
-561e3fe0-1a3e-4cf9-b523-bfd2f6cae807,anon_5b295aa731,Redes sociales
-561e3fe0-1a3e-4cf9-b523-bfd2f6cae807,anon_5b295aa731,Copywriting
-cc701a91-f81f-474c-9793-8eda7c6597f2,anon_97c39b14e1,Facturación
-cc701a91-f81f-474c-9793-8eda7c6597f2,anon_97c39b14e1,Gestión documental
-cc701a91-f81f-474c-9793-8eda7c6597f2,anon_97c39b14e1,Atención al cliente
-cc701a91-f81f-474c-9793-8eda7c6597f2,anon_97c39b14e1,SAP
-cc701a91-f81f-474c-9793-8eda7c6597f2,anon_97c39b14e1,Excel
-3c252707-346e-41a7-b92b-c45107c0bcfa,anon_d7db18b868,Facturación
-3c252707-346e-41a7-b92b-c45107c0bcfa,anon_d7db18b868,Atención al cliente
-3c252707-346e-41a7-b92b-c45107c0bcfa,anon_d7db18b868,Excel
-3c252707-346e-41a7-b92b-c45107c0bcfa,anon_d7db18b868,Gestión documental
-1cf838d5-dde8-415b-b9a0-0e6a31a30cfa,anon_395852f410,Estadística
-1cf838d5-dde8-415b-b9a0-0e6a31a30cfa,anon_395852f410,SQL
-1cf838d5-dde8-415b-b9a0-0e6a31a30cfa,anon_395852f410,Pandas
-1cf838d5-dde8-415b-b9a0-0e6a31a30cfa,anon_395852f410,Excel avanzado
-1cf838d5-dde8-415b-b9a0-0e6a31a30cfa,anon_395852f410,Visualización de datos
-1cf838d5-dde8-415b-b9a0-0e6a31a30cfa,anon_395852f410,ETL
-1cf838d5-dde8-415b-b9a0-0e6a31a30cfa,anon_395852f410,Python
-1cf838d5-dde8-415b-b9a0-0e6a31a30cfa,anon_395852f410,Tableau
-9110f56e-6b0e-4923-a9a6-c82dcf59a9d0,anon_e08127767b,SAP
-9110f56e-6b0e-4923-a9a6-c82dcf59a9d0,anon_e08127767b,Facturación
-9110f56e-6b0e-4923-a9a6-c82dcf59a9d0,anon_e08127767b,Atención al cliente
-9110f56e-6b0e-4923-a9a6-c82dcf59a9d0,anon_e08127767b,Excel
-9110f56e-6b0e-4923-a9a6-c82dcf59a9d0,anon_e08127767b,Gestión documental
-b7af9d33-f8ab-4050-8976-6c415f2489de,anon_62fc33855c,Excel
-b7af9d33-f8ab-4050-8976-6c415f2489de,anon_62fc33855c,Gestión documental
-b7af9d33-f8ab-4050-8976-6c415f2489de,anon_62fc33855c,Facturación
-b7af9d33-f8ab-4050-8976-6c415f2489de,anon_62fc33855c,Atención al cliente
-5335ec57-4922-40c6-9cec-107f4289e49c,anon_6ba18b6f64,APIs REST
-5335ec57-4922-40c6-9cec-107f4289e49c,anon_6ba18b6f64,React
-5335ec57-4922-40c6-9cec-107f4289e49c,anon_6ba18b6f64,Docker
-5335ec57-4922-40c6-9cec-107f4289e49c,anon_6ba18b6f64,Python
-5335ec57-4922-40c6-9cec-107f4289e49c,anon_6ba18b6f64,SQL
-5335ec57-4922-40c6-9cec-107f4289e49c,anon_6ba18b6f64,Java
-5335ec57-4922-40c6-9cec-107f4289e49c,anon_6ba18b6f64,JavaScript
-5335ec57-4922-40c6-9cec-107f4289e49c,anon_6ba18b6f64,Git
-5335ec57-4922-40c6-9cec-107f4289e49c,anon_6ba18b6f64,Node.js
-f99e4ba8-b5ce-446a-a65a-940fdff08be5,anon_035773a775,Muestreo
-f99e4ba8-b5ce-446a-a65a-940fdff08be5,anon_035773a775,Laboratorio
-f99e4ba8-b5ce-446a-a65a-940fdff08be5,anon_035773a775,Excel
-f99e4ba8-b5ce-446a-a65a-940fdff08be5,anon_035773a775,Redacción científica
-b1ab60a2-7d29-46eb-a01d-ea440ff8b6c5,anon_62fc33855c,Python
-b1ab60a2-7d29-46eb-a01d-ea440ff8b6c5,anon_62fc33855c,Git
-b1ab60a2-7d29-46eb-a01d-ea440ff8b6c5,anon_62fc33855c,Docker
-b1ab60a2-7d29-46eb-a01d-ea440ff8b6c5,anon_62fc33855c,SQL
-b1ab60a2-7d29-46eb-a01d-ea440ff8b6c5,anon_62fc33855c,Java
-b1ab60a2-7d29-46eb-a01d-ea440ff8b6c5,anon_62fc33855c,APIs REST
-b1ab60a2-7d29-46eb-a01d-ea440ff8b6c5,anon_62fc33855c,JavaScript
-b1ab60a2-7d29-46eb-a01d-ea440ff8b6c5,anon_62fc33855c,React
-37cd8289-c660-4543-9e5b-131c91f4741e,anon_d7db18b868,SAP
-37cd8289-c660-4543-9e5b-131c91f4741e,anon_d7db18b868,Gestión documental
-37cd8289-c660-4543-9e5b-131c91f4741e,anon_d7db18b868,Facturación
-37cd8289-c660-4543-9e5b-131c91f4741e,anon_d7db18b868,Excel
-37cd8289-c660-4543-9e5b-131c91f4741e,anon_d7db18b868,Atención al cliente
-8fd746c7-0216-4c6d-ad3f-902f4903fd0b,anon_5b295aa731,Facturación
-8fd746c7-0216-4c6d-ad3f-902f4903fd0b,anon_5b295aa731,Gestión documental
-8fd746c7-0216-4c6d-ad3f-902f4903fd0b,anon_5b295aa731,Atención al cliente
-8fd746c7-0216-4c6d-ad3f-902f4903fd0b,anon_5b295aa731,Excel
-e884cb86-e3e7-474d-85fb-1e8f90776e01,anon_62fc33855c,Canva
-e884cb86-e3e7-474d-85fb-1e8f90776e01,anon_62fc33855c,Redes sociales
-e884cb86-e3e7-474d-85fb-1e8f90776e01,anon_62fc33855c,Email marketing
-e884cb86-e3e7-474d-85fb-1e8f90776e01,anon_62fc33855c,Copywriting
-e884cb86-e3e7-474d-85fb-1e8f90776e01,anon_62fc33855c,Google Ads
-9093f18b-6049-47a7-9d60-db13b09a7130,anon_5b295aa731,APIs REST
-9093f18b-6049-47a7-9d60-db13b09a7130,anon_5b295aa731,Node.js
-9093f18b-6049-47a7-9d60-db13b09a7130,anon_5b295aa731,Docker
-9093f18b-6049-47a7-9d60-db13b09a7130,anon_5b295aa731,JavaScript
-6edcfca2-e1f3-48b7-ba2f-8ec83a981795,anon_035773a775,Canva
-6edcfca2-e1f3-48b7-ba2f-8ec83a981795,anon_035773a775,Email marketing
-6edcfca2-e1f3-48b7-ba2f-8ec83a981795,anon_035773a775,Redes sociales
-6edcfca2-e1f3-48b7-ba2f-8ec83a981795,anon_035773a775,Copywriting
-40a15bf6-452a-46a2-b65b-693a5235ec82,anon_6ba18b6f64,Excel avanzado
-40a15bf6-452a-46a2-b65b-693a5235ec82,anon_6ba18b6f64,SQL
-40a15bf6-452a-46a2-b65b-693a5235ec82,anon_6ba18b6f64,Python
-40a15bf6-452a-46a2-b65b-693a5235ec82,anon_6ba18b6f64,Estadística
-40a15bf6-452a-46a2-b65b-693a5235ec82,anon_6ba18b6f64,ETL
-40a15bf6-452a-46a2-b65b-693a5235ec82,anon_6ba18b6f64,Pandas
+1a6bee08-2b80-4b1d-b929-193cd587754a,anon_180cb1a48e,Google Ads
+1a6bee08-2b80-4b1d-b929-193cd587754a,anon_180cb1a48e,Email marketing
+1a6bee08-2b80-4b1d-b929-193cd587754a,anon_180cb1a48e,Canva
+1a6bee08-2b80-4b1d-b929-193cd587754a,anon_180cb1a48e,Copywriting
+1a6bee08-2b80-4b1d-b929-193cd587754a,anon_180cb1a48e,Redes sociales
+9eda1df1-918c-419f-af50-a0221ec67d5d,anon_6e3ed316ee,Google Ads
+9eda1df1-918c-419f-af50-a0221ec67d5d,anon_6e3ed316ee,Email marketing
+9eda1df1-918c-419f-af50-a0221ec67d5d,anon_6e3ed316ee,Redes sociales
+9eda1df1-918c-419f-af50-a0221ec67d5d,anon_6e3ed316ee,Copywriting
+6e6e58dc-4383-4348-980b-0a8fc4da7e20,anon_8a1fd4a8f3,Facturación
+6e6e58dc-4383-4348-980b-0a8fc4da7e20,anon_8a1fd4a8f3,Gestión documental
+6e6e58dc-4383-4348-980b-0a8fc4da7e20,anon_8a1fd4a8f3,Atención al cliente
+6e6e58dc-4383-4348-980b-0a8fc4da7e20,anon_8a1fd4a8f3,SAP
+6e6e58dc-4383-4348-980b-0a8fc4da7e20,anon_8a1fd4a8f3,Excel
+a59e2b24-9add-45c6-a571-7c62541b7f4b,anon_198a3660c0,Facturación
+a59e2b24-9add-45c6-a571-7c62541b7f4b,anon_198a3660c0,Atención al cliente
+a59e2b24-9add-45c6-a571-7c62541b7f4b,anon_198a3660c0,Excel
+a59e2b24-9add-45c6-a571-7c62541b7f4b,anon_198a3660c0,Gestión documental
+b612ca03-a42a-4af7-bae7-37f7eb1a234d,anon_793583ce0a,Estadística
+b612ca03-a42a-4af7-bae7-37f7eb1a234d,anon_793583ce0a,SQL
+b612ca03-a42a-4af7-bae7-37f7eb1a234d,anon_793583ce0a,Pandas
+b612ca03-a42a-4af7-bae7-37f7eb1a234d,anon_793583ce0a,Excel avanzado
+b612ca03-a42a-4af7-bae7-37f7eb1a234d,anon_793583ce0a,Visualización de datos
+b612ca03-a42a-4af7-bae7-37f7eb1a234d,anon_793583ce0a,ETL
+b612ca03-a42a-4af7-bae7-37f7eb1a234d,anon_793583ce0a,Python
+b612ca03-a42a-4af7-bae7-37f7eb1a234d,anon_793583ce0a,Tableau
+773e7315-84dc-4787-bcf5-6fd89abea1f4,anon_b7061fba8a,SAP
+773e7315-84dc-4787-bcf5-6fd89abea1f4,anon_b7061fba8a,Facturación
+773e7315-84dc-4787-bcf5-6fd89abea1f4,anon_b7061fba8a,Atención al cliente
+773e7315-84dc-4787-bcf5-6fd89abea1f4,anon_b7061fba8a,Excel
+773e7315-84dc-4787-bcf5-6fd89abea1f4,anon_b7061fba8a,Gestión documental
+f9880e63-2698-4fee-8c01-777627b3a4fc,anon_1568f735a9,Excel
+f9880e63-2698-4fee-8c01-777627b3a4fc,anon_1568f735a9,Gestión documental
+f9880e63-2698-4fee-8c01-777627b3a4fc,anon_1568f735a9,Facturación
+f9880e63-2698-4fee-8c01-777627b3a4fc,anon_1568f735a9,Atención al cliente
+7a7e66fd-0320-4711-9c39-eb7147427680,anon_b119044519,APIs REST
+7a7e66fd-0320-4711-9c39-eb7147427680,anon_b119044519,React
+7a7e66fd-0320-4711-9c39-eb7147427680,anon_b119044519,Docker
+7a7e66fd-0320-4711-9c39-eb7147427680,anon_b119044519,Python
+7a7e66fd-0320-4711-9c39-eb7147427680,anon_b119044519,SQL
+7a7e66fd-0320-4711-9c39-eb7147427680,anon_b119044519,Java
+7a7e66fd-0320-4711-9c39-eb7147427680,anon_b119044519,JavaScript
+7a7e66fd-0320-4711-9c39-eb7147427680,anon_b119044519,Git
+7a7e66fd-0320-4711-9c39-eb7147427680,anon_b119044519,Node.js
+1d039c0f-b771-4045-9d4b-230def35eb79,anon_a1e8211725,Muestreo
+1d039c0f-b771-4045-9d4b-230def35eb79,anon_a1e8211725,Laboratorio
+1d039c0f-b771-4045-9d4b-230def35eb79,anon_a1e8211725,Excel
+1d039c0f-b771-4045-9d4b-230def35eb79,anon_a1e8211725,Redacción científica
+3849f759-d486-4b39-b077-63d8ed9a563c,anon_1568f735a9,Python
+3849f759-d486-4b39-b077-63d8ed9a563c,anon_1568f735a9,Git
+3849f759-d486-4b39-b077-63d8ed9a563c,anon_1568f735a9,Docker
+3849f759-d486-4b39-b077-63d8ed9a563c,anon_1568f735a9,SQL
+3849f759-d486-4b39-b077-63d8ed9a563c,anon_1568f735a9,Java
+3849f759-d486-4b39-b077-63d8ed9a563c,anon_1568f735a9,APIs REST
+3849f759-d486-4b39-b077-63d8ed9a563c,anon_1568f735a9,JavaScript
+3849f759-d486-4b39-b077-63d8ed9a563c,anon_1568f735a9,React
+40029a98-2a42-4088-91b5-6fc56d4417a1,anon_198a3660c0,SAP
+40029a98-2a42-4088-91b5-6fc56d4417a1,anon_198a3660c0,Gestión documental
+40029a98-2a42-4088-91b5-6fc56d4417a1,anon_198a3660c0,Facturación
+40029a98-2a42-4088-91b5-6fc56d4417a1,anon_198a3660c0,Excel
+40029a98-2a42-4088-91b5-6fc56d4417a1,anon_198a3660c0,Atención al cliente
+00109771-3d12-4c1b-8e5b-8c3db24a7f33,anon_6e3ed316ee,Facturación
+00109771-3d12-4c1b-8e5b-8c3db24a7f33,anon_6e3ed316ee,Gestión documental
+00109771-3d12-4c1b-8e5b-8c3db24a7f33,anon_6e3ed316ee,Atención al cliente
+00109771-3d12-4c1b-8e5b-8c3db24a7f33,anon_6e3ed316ee,Excel
+2642a0f8-180a-47a3-8ad1-925aa0a2c4a5,anon_1568f735a9,Canva
+2642a0f8-180a-47a3-8ad1-925aa0a2c4a5,anon_1568f735a9,Redes sociales
+2642a0f8-180a-47a3-8ad1-925aa0a2c4a5,anon_1568f735a9,Email marketing
+2642a0f8-180a-47a3-8ad1-925aa0a2c4a5,anon_1568f735a9,Copywriting
+2642a0f8-180a-47a3-8ad1-925aa0a2c4a5,anon_1568f735a9,Google Ads
+fcc1aee3-4b9e-4699-bb1a-f19e30c2b6fa,anon_6e3ed316ee,APIs REST
+fcc1aee3-4b9e-4699-bb1a-f19e30c2b6fa,anon_6e3ed316ee,Node.js
+fcc1aee3-4b9e-4699-bb1a-f19e30c2b6fa,anon_6e3ed316ee,Docker
+fcc1aee3-4b9e-4699-bb1a-f19e30c2b6fa,anon_6e3ed316ee,JavaScript
+c3fef55d-b627-40c4-a0c2-bf134bc6a277,anon_a1e8211725,Canva
+c3fef55d-b627-40c4-a0c2-bf134bc6a277,anon_a1e8211725,Email marketing
+c3fef55d-b627-40c4-a0c2-bf134bc6a277,anon_a1e8211725,Redes sociales
+c3fef55d-b627-40c4-a0c2-bf134bc6a277,anon_a1e8211725,Copywriting
+5a6093b0-6a9c-4432-9e3c-96b129e15e3d,anon_b119044519,Excel avanzado
+5a6093b0-6a9c-4432-9e3c-96b129e15e3d,anon_b119044519,SQL
+5a6093b0-6a9c-4432-9e3c-96b129e15e3d,anon_b119044519,Python
+5a6093b0-6a9c-4432-9e3c-96b129e15e3d,anon_b119044519,Estadística
+5a6093b0-6a9c-4432-9e3c-96b129e15e3d,anon_b119044519,ETL
+5a6093b0-6a9c-4432-9e3c-96b129e15e3d,anon_b119044519,Pandas

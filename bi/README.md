@@ -120,6 +120,13 @@ Similarity promedio = AVERAGE(Fact_Ofertas[similarity])
 Lo mismo pero de la etapa 1 (embeddings) — comparado contra el score,
 muestra si el prefiltro barato y el LLM caro tienden a estar de acuerdo.
 
+> `similarity` nace como similitud coseno de 0 a 1, pero tanto la vista
+> `vw_bi_ofertas` como el generador de demo la exponen **escalada a 0-100**,
+> igual que `score`. Así las dos métricas del pipeline quedan en la misma
+> unidad (el scatter se lee directo, la diagonal es "coinciden") y se evita
+> un decimal que Power BI en español malinterpreta al importar CSV: leería
+> el punto de `0.6511` como separador de miles, entendiendo `6511`.
+
 ```dax
 % Alta compatibilidad = 
 DIVIDE(
@@ -206,8 +213,8 @@ Con las 3 consultas abiertas en el editor:
 - `cv_skills_demo` → renombrar a **`Dim_CV_Skills`**.
 - `ofertas_demo` → renombrar a **`Fact_Ofertas`**. Revisá:
   `fecha_busqueda` y `aplicada_en` = Fecha/hora, `aplicada` =
-  Verdadero/Falso, `similarity` = Número decimal, `score` /
-  `cantidad_matches` / `cantidad_gaps` = Número entero. Si `aplicada_en`
+  Verdadero/Falso, `similarity` / `score` / `cantidad_matches` /
+  `cantidad_gaps` = Número entero. Si `aplicada_en`
   quedó como texto (puede pasar por las filas vacías de las ofertas no
   aplicadas), seleccioná la columna → pestaña **Transformar** → **Tipo
   de datos** → **Fecha/hora**.
@@ -285,7 +292,9 @@ matching encuentra mejores oportunidades.
 `similarity`, Eje Y: `score`, campo **Detalles**: `job_id` (clic en el
 campo dentro de "Valores" → **No resumir**, para que cada punto sea una
 oferta y no un promedio). Leyenda: `fuente`. Cuenta si el filtro barato
-(embeddings) y el veredicto caro (LLM) tienden a coincidir.
+(embeddings) y el veredicto caro (LLM) tienden a coincidir: como las dos
+métricas están en escala 0-100, los puntos cerca de la diagonal son
+ofertas donde ambas etapas coincidieron.
 
 **F) Skills más pedidas** — Gráfico de barras horizontales. Eje Y:
 `Dim_CV_Skills[skill]`. Valores: `CVs con esta skill`. Clic derecho →
