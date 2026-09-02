@@ -6,7 +6,7 @@ dedicás, busca en seis portales de empleo a la vez y te devuelve las
 ofertas rankeadas con una explicación real de por qué encajás (o por qué
 no).
 
-🔗 **[empatianextstep.com](https://empatianextstep.com)** · [Dashboard de
+🔗 **[empatianextstep.com](https://www.empatianextstep.com)** · [Dashboard de
 Power BI](#dashboard-de-power-bi-modelo-de-datos-y-analítica) · [Cómo está
 armado](#arquitectura)
 
